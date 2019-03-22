@@ -62,6 +62,8 @@ class SyncAgent {
 
   fetchAccounts: boolean;
 
+  resetLifecyclestage: boolean;
+
   constructor(ctx: HullContext) {
     const {
       client,
@@ -87,6 +89,8 @@ class SyncAgent {
     // TODO: `handle_accounts` name chosen for hull-salesforce
     // compatibility
     this.fetchAccounts = ctx.connector.private_settings.handle_accounts;
+    this.resetLifecyclestage =
+      ctx.connector.private_settings.reset_lifecyclestage || false;
   }
 
   isInitialized(): boolean {
@@ -451,10 +455,38 @@ class SyncAgent {
     const envelopesToUpsert = filterResults.toInsert.concat(
       filterResults.toUpdate
     );
+
+    let envelopesToReset = [];
+    console.log(this.resetLifecyclestage);
+    if (this.resetLifecyclestage) {
+      envelopesToReset = _.filter(envelopesToUpsert, envelope => {
+        console.log(envelope);
+        const lifeCycleProp = _.filter(
+          envelope.hubspotWriteContact.properties,
+          {
+            property: "lifecyclestage"
+          }
+        );
+        return lifeCycleProp.length > 0;
+      });
+
+      console.log(envelopesToReset);
+      envelopesToReset = _.map(envelopesToReset, envelope => {
+        const resetEnvelope = _.cloneDeep(envelope);
+        resetEnvelope.hubspotWriteContact.properties = [
+          {
+            property: "lifecyclestage",
+            value: ""
+          }
+        ];
+        return resetEnvelope;
+      });
+    }
+
     return this.hubspotClient
-      .postContactsEnvelopes(envelopesToUpsert)
-      .then(resultEnvelopes => {
-        resultEnvelopes.forEach(envelope => {
+      .postContactsEnvelopes(envelopesToReset)
+      .then(resultEnvelopes2 => {
+        resultEnvelopes2.forEach(envelope => {
           if (envelope.error === undefined) {
             this.hullClient
               .asUser(envelope.message.user)
@@ -471,6 +503,28 @@ class SyncAgent {
               });
           }
         });
+
+        return this.hubspotClient
+          .postContactsEnvelopes(envelopesToUpsert)
+          .then(resultEnvelopes => {
+            resultEnvelopes.forEach(envelope => {
+              if (envelope.error === undefined) {
+                this.hullClient
+                  .asUser(envelope.message.user)
+                  .logger.info(
+                    "outgoing.user.success",
+                    envelope.hubspotWriteContact
+                  );
+              } else {
+                this.hullClient
+                  .asUser(envelope.message.user)
+                  .logger.error("outgoing.user.error", {
+                    error: envelope.error,
+                    hubspotWriteContact: envelope.hubspotWriteContact
+                  });
+              }
+            });
+          });
       })
       .catch(error => {
         this.hullClient.logger.error("outgoing.job.error", {

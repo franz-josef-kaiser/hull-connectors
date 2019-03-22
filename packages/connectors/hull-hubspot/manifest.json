@@ -248,6 +248,13 @@
       "type": "boolean",
       "default": false,
       "format": "hidden"
+    },
+    {
+      "name": "reset_lifecyclestage",
+      "title": "Reset Lifecycle Stage",
+      "type": "boolean",
+      "default": false,
+      "format": "hidden"
     }
   ],
   "deployment_settings": [],

@@ -47,7 +47,7 @@ const connector = new Hull.Connector({
     firehoseUrl: OVERRIDE_FIREHOSE_URL
   }
 });
-
+console.log(`Starting server at port ${PORT}...`);
 connector.setupApp(app);
 server(app);
 connector.startApp(app);
