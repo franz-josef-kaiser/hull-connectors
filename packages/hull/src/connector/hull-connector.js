@@ -170,6 +170,7 @@ class HullConnector {
     );
     app.set("views", `${applicationDirectory}/views`);
     app.set("view engine", "ejs");
+    app.disable("x-powered-by");
     this.middlewares.map(middleware => app.use(middleware));
     return app;
   }
