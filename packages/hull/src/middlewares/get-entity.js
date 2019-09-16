@@ -5,7 +5,9 @@ import { searchUser, searchAccount, searchEvents } from "../utils/get-entity";
 import {
   getEventSchema,
   getUserSchema,
-  getAccountSchema
+  getUserSegments,
+  getAccountSchema,
+  getAccountSegments
 } from "../utils/get-schemas";
 
 module.exports = function httpClientMiddlewareFactory() {
@@ -23,11 +25,13 @@ module.exports = function httpClientMiddlewareFactory() {
       },
       users: {
         get: searchUser(hull),
-        getSchema: getUserSchema(hull)
+        getSchema: getUserSchema(hull),
+        getSegments: getUserSegments(hull)
       },
       accounts: {
         get: searchAccount(hull),
-        getSchema: getAccountSchema(hull)
+        getSchema: getAccountSchema(hull),
+        getSegments: getAccountSegments(hull)
       }
     };
     next();

@@ -13,6 +13,7 @@ import createHandler from "./create-handler";
 import searchHandler from "./search-handler";
 import authHandler from "./auth-handler";
 import schemaHandler from "./schema-handler";
+import segmentsHandler from "./segments-handler";
 import userUpdate from "./user-update";
 import accountUpdate from "./account-update";
 
@@ -35,6 +36,7 @@ const handler = ({ flow_size, flow_in }: HandlerType) => (
       createHandler,
       searchHandler,
       schemaHandler,
+      segmentsHandler,
       subscribeHandler,
       unsubscribeHandler,
       authHandler

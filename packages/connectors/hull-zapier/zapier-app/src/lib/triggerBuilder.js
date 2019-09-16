@@ -1,5 +1,28 @@
 import _ from "lodash";
 import { subscribe, unsubscribe } from "./subscribes";
+import { post } from "./request";
+import { segmentsUrl } from "../config";
+
+const segmentsFor = entityType => async (z, _bundle) => {
+  // Only fetch segments for Users and Accounts
+  if (entityType !== "user" && entityType !== "account") {
+    return [];
+  }
+  const choices = await post({
+    z,
+    url: segmentsUrl,
+    body: {
+      entityType
+    }
+  });
+  return {
+    key: "segments",
+    required: true,
+    label: `${entityType} segments`,
+    helpText: `Which segments the ${entityType} needs to be in to execute trigger`,
+    choices
+  };
+};
 
 export default function triggerBuilder({ sample, noun, action }) {
   const titleAction = _.startCase(action);
@@ -17,7 +40,7 @@ export default function triggerBuilder({ sample, noun, action }) {
 
     // `operation` is where we make the call to your API
     operation: {
-      inputFields: [],
+      inputFields: [segmentsFor(noun)],
 
       type: "hook",
 

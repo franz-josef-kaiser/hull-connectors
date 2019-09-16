@@ -7,6 +7,7 @@ import type {
   HullFetchedUser,
   HullFetchedAccount,
   HullAttributeSchemaEntry,
+  HullSegmentDefinitionEntry,
   HullEventSchemaEntry,
   HullClientCredentials,
   HullUserSegment,
@@ -84,11 +85,13 @@ export type HullContext = {
     },
     users: {
       get: HullEntityClaims => Promise<HullFetchedUser>,
-      getSchema: () => Promise<Array<HullAttributeSchemaEntry>>
+      getSchema: () => Promise<Array<HullAttributeSchemaEntry>>,
+      getSegments: () => Promise<Array<HullSegmentDefinitionEntry>>
     },
     accounts: {
       get: HullEntityClaims => Promise<HullFetchedAccount>,
-      getSchema: () => Promise<Array<HullAttributeSchemaEntry>>
+      getSchema: () => Promise<Array<HullAttributeSchemaEntry>>,
+      getSegments: () => Promise<Array<HullSegmentDefinitionEntry>>
     }
   },
   helpers: {

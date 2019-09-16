@@ -14,10 +14,10 @@ const subscribe = async (
   const { private_settings } = connector;
   const { body } = message;
   // $FlowFixMe
-  const { url, action, entityType, value } = body;
+  const { url, segments, action, entityType, value } = body;
 
   // [ { url, action, entityType, value } ]
-  const subscription = { url, action, entityType, value };
+  const subscription = { url, segments, action, entityType, value };
   await helpers.settingsUpdate({
     ...private_settings,
     subscriptions: _.uniqBy(

@@ -140,6 +140,13 @@
       "options": {
         "respondWithError": true
       }
+    },
+    {
+      "url": "/segments",
+      "handler": "segmentsHandler",
+      "options": {
+        "respondWithError": true
+      }
     }
   ],
   "subscriptions": [

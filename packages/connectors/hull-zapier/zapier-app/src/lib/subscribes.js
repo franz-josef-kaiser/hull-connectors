@@ -2,12 +2,13 @@ import { subscribeUrl, unsubscribeUrl } from "../config";
 import { post } from "./request";
 
 export const subscribe = ({ entityType, action }) => async (z, bundle) => {
-  const { targetUrl, value } = bundle;
+  const { targetUrl, value, segments } = bundle;
   post({
     z,
     url: subscribeUrl,
     body: {
       url: targetUrl,
+      segments,
       action,
       entityType,
       value

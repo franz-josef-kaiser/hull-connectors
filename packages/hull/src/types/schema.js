@@ -15,3 +15,20 @@ export type HullAttributeSchemaEntry = {
   visible: boolean,
   track_changes: boolean
 };
+
+export type HullSegmentDefinitionEntry = {
+  id: string,
+  name: string,
+  type: "users_segment" | "accounts_segment",
+  query: {},
+  predicate: {},
+  referenced_attributes: Array<string>,
+  referenced_events: Array<string>,
+  fields_list: Array<string>,
+  stats: {
+    users?: number,
+    accounts?: number
+  },
+  created_at: string,
+  updated_at: string
+};
