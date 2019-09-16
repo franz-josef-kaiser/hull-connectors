@@ -4,6 +4,7 @@ import authentication from "./authentication";
 const searches = require("./searches");
 const creates = require("./creates");
 const triggers = require("./triggers");
+const resources = require("./resources");
 // import * as resources from "./resources";
 
 const platformVersion = require("zapier-platform-core").version;
@@ -54,7 +55,7 @@ const App = {
   afterResponse: [parseResponse],
 
   // If you want to define optional resources to simplify creation of triggers, searches, creates - do that here!
-  // resources,
+  resources,
 
   // If you want your trigger to show up, you better include it here!
   triggers,
