@@ -5,6 +5,9 @@ import type {
   HullExternalResponse
 } from "hull";
 
+const removeTraits = key =>
+  key.indexOf("traits_") === 0 ? key.substring("traits_".length) : key;
+
 const credentials = async (
   ctx: HullContext,
   message: HullIncomingHandlerMessage
@@ -16,14 +19,26 @@ const credentials = async (
     (entityType === "user_event" && "events") ||
     "users";
   const data = await ctx.entities[handler].getSchema();
+  // Here we actually need to return a full payload:
+  // {
+  //   account: {}
+  //   account_segments: {}
+  //   user: {}
+  //   segments: {}
+  // }
+  // What is returned from User entity is still raw attributes from the user only,
+  // with the `account.` inside etc... > should probably be done at the getSchema() level ?
   return {
     status: 200,
     data: data.map(
-      ({ key, type /* configurable, visible, track_changes */ }) => ({
-        key,
-        label: key,
-        type
-      })
+      ({ key, type /* configurable, visible, track_changes */ }) => {
+        const clean = removeTraits(key);
+        return {
+          key: clean,
+          label: clean,
+          type
+        };
+      }
     )
   };
 };
