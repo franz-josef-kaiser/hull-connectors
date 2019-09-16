@@ -9,10 +9,15 @@ const configHandler = async (
   const { body } = message;
   // $FlowFixMe
   const { claims, entityType, include = {} } = body;
+  console.log(message);
+  // const claims = _.pickBy(
+  //   { email, domain, external_id, anonymous_id },
+  //   _.isString
+  // );
   if (_.isEmpty(claims)) {
     return {
       status: 404,
-      error: "Can't search for an empty value"
+      error: `Can't search for an empty value! ${JSON.stringify(claims)}`
     };
   }
   const isUser = entityType === "user";
@@ -44,7 +49,7 @@ const configHandler = async (
 
     return {
       status: 200,
-      data
+      data: [data]
     };
   } catch (err) {
     console.log(err);
