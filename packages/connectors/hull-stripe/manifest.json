@@ -1,0 +1,58 @@
+{
+  "name": "Stripe",
+  "description": "Collect Stripe Charges and Subscription events",
+  "tags": ["incoming", "oneColumn", "smart-notifier"],
+  "source": "stripe",
+  "logo": "logo.png",
+  "picture": "picture.png",
+  "admin": "auth",
+  "tabs": [
+    {
+      "title": "Credentials",
+      "url": "auth",
+      "size": "small",
+      "editable": false
+    }
+  ],
+  "version": "0.2.3",
+  "settings": [],
+  "private_settings": [
+    {
+      "name": "metadata_id_parameter",
+      "title": "Metadata field",
+      "description":
+        "The name of the field in the Stripe payload where the User ID is stored. If empty, we fallback to using the Email we receive",
+      "type": "string"
+    },
+    {
+      "name": "id_parameter",
+      "title": "Which User ID to match to.",
+      "type": "string",
+      "enum": ["external_id", "id", "email"],
+      "default": "external_id"
+    },
+    {
+      "name": "use_accounts",
+      "title":
+        "Store Stripe Attributes in Account (in addition to User)",
+      "default": true,
+      "type": "boolean"
+    }
+  ],
+  "deployment_settings": [],
+  "resources": [],
+  "readme": "readme.md",
+  "ui": false,
+  "schedules": [
+    {
+      "url": "/status",
+      "type": "cron",
+      "value": "0 */1 * * *"
+    }
+  ],
+  "subscriptions": [
+    {
+      "url": "/smart-notifier"
+    }
+  ]
+}

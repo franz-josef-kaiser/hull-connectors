@@ -1,0 +1,22 @@
+{
+  "parser": "babel-eslint",
+  "globals": {
+    "Hull": true
+  },
+  "settings": {
+    "ecmascript": 6,
+  },
+  "extends": [],
+  "plugins": [],
+  "env": {
+    "node": false,
+    "browser": true,
+    "commonjs": true,
+    "worker": true,
+    "es6": true
+  },
+  "rules": {
+    "global-require": [0],
+    "no-unused-vars": [0]
+  }
+}
