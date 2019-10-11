@@ -3,17 +3,21 @@ import type { HullContext, HullIncomingHandlerMessage } from "hull";
 import _ from "lodash";
 // import type { ConfResponse } from "hull-vm";
 
+const CLAIMS = ["email", "domain", "external_id", "anonymous_id"];
 const configHandler = async (
   ctx: HullContext,
   message: HullIncomingHandlerMessage
 ): Promise<Object> => {
   const { body } = message;
   // $FlowFixMe
-  const { email, domain, external_id, anonymous_id, entityType, events } = body;
-  const claims = _.pickBy(
-    { email, domain, external_id, anonymous_id },
-    _.isString
+  const { entityType, claims, include } = body;
+
+  // $FlowFixMe
+  const filteredClaims = _.pickBy(
+    claims,
+    (v, k) => _.isString(v) && CLAIMS.indexOf(k) >= 0
   );
+  console.log("claims", claims);
   if (_.isEmpty(claims)) {
     return {
       status: 404,
@@ -25,17 +29,10 @@ const configHandler = async (
     // const getter = entity === "account" ? ctx.entities.accounts : ctx.entities.users;
     const payload = await (isUser
       ? ctx.entities.users.get({
-          claims,
-          include: {
-            events: {
-              names: events,
-              per_page: 20,
-              page: 1
-            }
-          }
+          claims: filteredClaims,
+          include
         })
       : ctx.entities.accounts.get({ claims }));
-
     if (!payload) {
       return {
         status: 404,
@@ -47,13 +44,13 @@ const configHandler = async (
     const data = isUser
       ? {
           ...payload,
-          user: group(payload.user),
-          account: group(payload.account || {}),
-          events: payload.events || []
+          ...(payload.user ? { user: group(payload.user) } : {}),
+          ...(payload.account ? { account: group(payload.account) } : {}),
+          ...(payload.events ? { events: payload.events } : {})
         }
       : {
           ...payload,
-          account: group(payload.account || {})
+          ...(payload.account ? { account: group(payload.account) } : {})
         };
 
     return {

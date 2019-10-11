@@ -116,7 +116,7 @@ const getAccountPayload = async (
   );
 
   return {
-    account,
+    account: _.omit(account, "indexed_at", "doctype"),
     account_segments: segments,
     account_segment_ids: segment_ids || []
   };
@@ -141,7 +141,7 @@ const getUserPayload = async (
   // TODO: see what else we can HullExternalResponse
   return {
     // message_id: "",
-    user: _.omit(user, "account"),
+    user: _.omit(user, "account", "indexed_at", "doctype", "segment_ids"),
     segments,
     segment_ids: segment_ids || [],
     ...(includeEvents ? { events } : {}),
