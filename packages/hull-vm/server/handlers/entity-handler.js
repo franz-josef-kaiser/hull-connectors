@@ -30,56 +30,56 @@ export default async function getEntity(
   const { code } = private_settings;
   const { body } = message;
   // $FlowFixMe
-  const { claim, entityType, events } = body;
-  if (!claim) {
+  const { search, claims, entity, include } = body;
+  if (!search && (!claims || _.isEmpty(claims))) {
     return {
       status: 404,
       error: "Can't search for an empty value"
     };
   }
-  const isUser = entityType === "user";
+  const isUser = entity === "user";
   try {
-    const rawPayload = await ctx.entities.get({
-      claim,
-      entity: entityType,
+    const response = await ctx.entities.get({
+      claims,
+      search,
+      entity,
       include: {
         events: {
-          names: events,
+          ...include.events,
           per_page: 20,
           page: 1
         }
       }
     });
 
+    const rawPayload = _.first(response.data);
     if (!rawPayload) {
       return {
         status: 404,
-        error: "Can't find user"
+        error: `Can't find ${entity} with ${search}`
       };
     }
     const { group } = ctx.client.utils.traits;
-
+    const { user, account, events = [] } = rawPayload;
     const payload = isUser
       ? {
           ...rawPayload,
-          user: group(rawPayload.user),
-          account: group(rawPayload.account),
-          changes: getSample(rawPayload.user),
-          events: (rawPayload.events || []).filter(isVisible)
+          user: group(user),
+          account: group(account),
+          changes: getSample(user),
+          events: (events || []).filter(isVisible)
         }
       : {
           ...rawPayload,
-          account: group(rawPayload.account),
-          changes: getSample(rawPayload.account)
+          account: group(account),
+          changes: getSample(account)
         };
-
-    const claims = getClaims(isUser ? "user" : "account", rawPayload);
 
     const result = await compute(ctx, {
       source: "processor",
-      claims,
-      entity: entityType,
+      claims: getClaims(isUser ? "user" : "account", rawPayload),
       preview: true,
+      entity,
       payload,
       code
     });
