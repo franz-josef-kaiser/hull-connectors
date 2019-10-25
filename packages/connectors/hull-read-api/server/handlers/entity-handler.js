@@ -1,57 +1,59 @@
 // @flow
-import type { HullContext, HullIncomingHandlerMessage } from "hull";
+import type {
+  HullContext,
+  HullIncomingHandlerMessage,
+  HullGetEntityParams
+} from "hull";
 import _ from "lodash";
 // import type { ConfResponse } from "hull-vm";
 
-const CLAIMS = ["email", "domain", "external_id", "anonymous_id"];
 const configHandler = async (
   ctx: HullContext,
   message: HullIncomingHandlerMessage
 ): Promise<Object> => {
   const { body } = message;
   // $FlowFixMe
-  const { entityType, claims, include } = body;
+  const params: HullGetEntityParams = body;
+  const { entity, claims, include, per_page, page } = params;
 
-  // $FlowFixMe
-  const filteredClaims = _.pickBy(
-    claims,
-    (v, k) => _.isString(v) && CLAIMS.indexOf(k) >= 0
-  );
-  console.log("claims", claims);
   if (_.isEmpty(claims)) {
     return {
       status: 404,
       error: "Can't search for an empty value"
     };
   }
-  const isUser = entityType === "user";
+  const isUser = entity === "user";
   try {
     // const getter = entity === "account" ? ctx.entities.accounts : ctx.entities.users;
-    const payload = await (isUser
-      ? ctx.entities.users.get({
-          claims: filteredClaims,
-          include
-        })
-      : ctx.entities.accounts.get({ claims }));
-    if (!payload) {
+    const payload = await ctx.entities.get({
+      claims,
+      entity,
+      per_page,
+      page,
+      include
+    });
+    if (!payload || !payload.length) {
       return {
         status: 404,
-        error: `Can't find ${entityType}`
+        error: `Can't find ${entity}`
       };
     }
     const { group } = ctx.client.utils.traits;
 
-    const data = isUser
-      ? {
-          ...payload,
-          ...(payload.user ? { user: group(payload.user) } : {}),
-          ...(payload.account ? { account: group(payload.account) } : {}),
-          ...(payload.events ? { events: payload.events } : {})
-        }
-      : {
-          ...payload,
-          ...(payload.account ? { account: group(payload.account) } : {})
-        };
+    const data = payload.map(p => {
+      const { user, account, events } = p;
+      return isUser
+        ? {
+            ...p,
+            ...(user ? { user: group(user) } : {}),
+            ...(account ? { account: group(account) } : {}),
+            ...(events ? { events } : {})
+          }
+        : {
+            ...p,
+            ...(account ? { account: group(account) } : {})
+          };
+    });
 
     return {
       status: 200,
@@ -59,7 +61,7 @@ const configHandler = async (
     };
   } catch (err) {
     console.log(err);
-    ctx.client.logger.error(`fetch.${entityType}.error`, {
+    ctx.client.logger.error(`fetch.${entity}.error`, {
       error: err.message
     });
     return {

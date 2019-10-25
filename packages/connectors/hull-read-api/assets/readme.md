@@ -24,10 +24,12 @@ This API is not yet production ready, and it is not made for high-volume queries
 ### Body:
 ```js
 {
-	"entityType": "user",
+	"subject": "user", //|account
 	"claims": {
 		"email": "romain@hull.io"
 	},
+  "per_page": 1, //Max: 50 results. will error if you pass a higher number
+  "page": 1,
 	"include": {
 		"account": false, //Default: true
 	}
@@ -125,7 +127,7 @@ This API is not yet production ready, and it is not made for high-volume queries
 ### Body:
 ```js
 {
-	"entityType": "account",
+	"subject": "account",
 	"claims": {
 		"domain": "hull.io"
 	},
