@@ -14,7 +14,7 @@ const configHandler = async (
   const { body } = message;
   // $FlowFixMe
   const params: HullGetEntityParams = body;
-  const { entity, claims, include, per_page, page } = params;
+  const { search, entity, claims, include, per_page, page } = params;
 
   if (_.isEmpty(claims)) {
     return {
@@ -32,15 +32,15 @@ const configHandler = async (
       page,
       include
     });
-    if (!payload || !payload.length) {
-      return {
-        status: 404,
-        error: `Can't find ${entity}`
-      };
-    }
+    // if (!payload.data || !payload.data.length) {
+    //   return {
+    //     status: 404,
+    //     error: `Can't find ${entity}`
+    //   };
+    // }
     const { group } = ctx.client.utils.traits;
 
-    const data = payload.map(p => {
+    const data = payload.data.map(p => {
       const { user, account, events } = p;
       return isUser
         ? {
@@ -57,7 +57,10 @@ const configHandler = async (
 
     return {
       status: 200,
-      data
+      data: {
+        ...payload,
+        data
+      }
     };
   } catch (err) {
     console.log(err);
