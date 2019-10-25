@@ -24,7 +24,6 @@ const configHandler = async (
   }
   const isUser = entity === "user";
   try {
-    // const getter = entity === "account" ? ctx.entities.accounts : ctx.entities.users;
     const payload = await ctx.entities.get({
       claims,
       entity,
@@ -32,14 +31,7 @@ const configHandler = async (
       page,
       include
     });
-    // if (!payload.data || !payload.data.length) {
-    //   return {
-    //     status: 404,
-    //     error: `Can't find ${entity}`
-    //   };
-    // }
     const { group } = ctx.client.utils.traits;
-
     const data = payload.data.map(p => {
       const { user, account, events } = p;
       return isUser
