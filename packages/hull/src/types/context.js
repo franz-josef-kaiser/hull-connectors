@@ -4,10 +4,10 @@ import type { agent } from "superagent";
 import type {
   HullGetEntityParams,
   HullIncludedEvents,
-  HullEntityType,
+  HullEntityName,
   HullFetchedEvent,
-  HullFetchedUser,
-  HullFetchedAccount,
+  HullGetUserResponse,
+  HullGetAccountResponse,
   HullAttributeSchemaEntry,
   HullEventSchemaEntry,
   HullClientCredentials,
@@ -81,19 +81,19 @@ export type HullContext = {
   request: agent,
   entities: {
     get: HullGetEntityParams => Promise<
-      Array<HullFetchedUser | HullFetchedAccount>
+      HullGetUserResponse | HullGetAccountResponse
     >,
-    getSchema: HullEntityType => Promise<Array<HullEventSchemaEntry>>,
+    getSchema: HullEntityName => Promise<Array<HullEventSchemaEntry>>,
     events: {
       get: HullIncludedEvents => Promise<Array<HullFetchedEvent>>,
       getSchema: () => Promise<Array<HullEventSchemaEntry>>
     },
     users: {
-      get: HullGetEntityParams => Promise<Array<HullFetchedUser>>,
+      get: HullGetEntityParams => Promise<HullGetUserResponse>,
       getSchema: () => Promise<Array<HullAttributeSchemaEntry>>
     },
     accounts: {
-      get: HullGetEntityParams => Promise<Array<HullFetchedAccount>>,
+      get: HullGetEntityParams => Promise<HullGetAccountResponse>,
       getSchema: () => Promise<Array<HullAttributeSchemaEntry>>
     }
   },

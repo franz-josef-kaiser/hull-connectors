@@ -1,7 +1,7 @@
 // @flow
 
 import _ from "lodash";
-import type { HullEntityClaims, HullEntityType } from "../../types";
+import type { HullEntityClaims, HullEntityName } from "../../types";
 
 const ID = ["id"];
 const EXTERNAL_ID = ["external_id.raw"];
@@ -17,17 +17,25 @@ const ACCOUNT_SEARCH = [
   ...ANONYMOUS_ID
 ];
 const USER_SEARCH = [...ID, ...NAME, ...EMAIL, ...EXTERNAL_ID, ...ANONYMOUS_ID];
-const TERMS = { email: EMAIL, domain: DOMAIN, external_id: EXTERNAL_ID, anonymous_id: ANONYMOUS_ID };
+const TERMS = {
+  email: EMAIL,
+  domain: DOMAIN,
+  external_id: EXTERNAL_ID,
+  anonymous_id: ANONYMOUS_ID
+};
 
-type Lookup = {term: {[string]: string } };
-type Condition = {bool: {["should"|"filter"]: Array<Lookup|Condition> } }
-type Options = {page?: number, per_page?: number, include?: Array<string> };
+type Lookup = { term: { [string]: string } };
+type Condition = { bool: { ["should" | "filter"]: Array<Lookup | Condition> } };
+type Options = { page?: number, per_page?: number, include?: Array<string> };
 
-export const condition = (verb: string, predicates: Array<Lookup|Condition>) => ({ bool: {[verb]: predicates }});
+export const condition = (
+  verb: string,
+  predicates: Array<Lookup | Condition>
+) => ({ bool: { [verb]: predicates } });
 
 export const query = (
   verb: string,
-  terms: Array<Lookup>,
+  terms: Array<Lookup | Condition>,
   { page = 1, per_page = 1, include }: Options
 ) =>
   verb && _.size(terms)
@@ -40,22 +48,39 @@ export const query = (
       }
     : undefined;
 
+const getTerms = (claims?: HullEntityClaims = {}): Array<Lookup | Condition> =>
+  _.reduce(
+    claims,
+    (filters, value, claim: string) => {
+      if (!TERMS[claim]) {
+        return filters;
+      }
+      const tt = TERMS[claim].map(term => ({ term: { [term]: value } }));
+      console.log(tt);
+      filters.push(tt.length === 1 ? _.first(tt) : condition("should", tt));
+      return filters;
+    },
+    []
+  );
+const getSearches = (term, lookups) =>
+  lookups.map(l => ({ term: { [l]: term } }));
 
-const getTerms = (claims: HullEntityClaims) => _.reduce(
+const getQuery = ({
   claims,
-  (filters, value, claim: string) => {
-    if (!TERMS[claim]){ return filters; }
-    const tt = TERMS[claim].map(term => ({ term: { [term]: value } }));
-    console.log(tt);
-    filters.push(tt.length===1 ? _.first(tt) : condition("should", tt))
-    return filters;
-  },
-  []
-)
-const getSearches = (term, lookups) => lookups.map(l => ({ term: { [l]: term } }));
-
-const getQuery = ({claims, entity, options, search }: {claims?: HullEntityClaims, search?: string, entity: HullEntityType, options: Options }) => search===undefined
+  entity,
+  options,
+  search
+}: {
+  claims?: HullEntityClaims,
+  search?: string,
+  entity: HullEntityName,
+  options: Options
+}) =>
+  search === undefined
     ? query("filter", getTerms(claims), options)
-    : query("should", getSearches(search, entity === "user" ? USER_SEARCH : ACCOUNT_SEARCH), options);
-;
+    : query(
+        "should",
+        getSearches(search, entity === "user" ? USER_SEARCH : ACCOUNT_SEARCH),
+        options
+      );
 export default getQuery;
