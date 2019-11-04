@@ -80,7 +80,7 @@
     },
     {
       "name": "synchronized_events",
-      "title": "User Filter",
+      "title": "User Event Filter",
       "description": "Which Events are sent to Zapier",
       "type": "array",
       "format": "event",
