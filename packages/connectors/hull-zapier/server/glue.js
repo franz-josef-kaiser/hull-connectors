@@ -63,6 +63,7 @@ const glue = {
     set("changes", input("changes")),
     set("isNewUser", ld("get", "${changes}", "is_new", false)),
     set("hasUserChanges", cond("lessThan", 0, ld("size", "${changes.user}"))),
+    set("hasNewEvents", cond("lessThan", 0, ld("size", input("events")))),
     set("hasUserLeftSegmentChanges", cond("lessThan", 0, ld("size", ld("get", "${changes}", "segments.left", [])))),
     set("hasUserEnteredSegmentChanges", cond("lessThan", 0, ld("size", ld("get", "${changes}", "segments.entered", [])))),
 
@@ -71,6 +72,9 @@ const glue = {
     ]),
     ifL("${hasUserChanges}", [
       set("zaps", ld("concat", "${zaps}", filter({ entityType: "user", action: "attribute_updated" }, settings("subscriptions"))))
+    ]),
+    ifL("${hasNewEvents}", [
+      set("zaps", ld("concat", "${zaps}", filter({ entityType: "user_event", action: "created" }, settings("subscriptions"))))
     ]),
     ifL("${hasUserEnteredSegmentChanges}", [
       set("zaps", ld("concat", "${zaps}", filter({ entityType: "user", action: "entered_segment" }, settings("subscriptions"))))

@@ -7,7 +7,7 @@ const testScenario = require("hull-connector-framework/src/test-scenario");
 import connectorConfig from "../../server/config";
 
 describe("Outgoing Users Tests", () => {
-  /*it("Send Single User To Zapier", () => {
+  it("Send Single User To Zapier", () => {
     return testScenario({ connectorConfig }, ({ handlers, nock, expect }) => {
       const updateMessages = _.cloneDeep(require("./fixtures/notifier-payloads/update-single-user"));
       const private_settings = {
@@ -478,7 +478,7 @@ describe("Outgoing Users Tests", () => {
         platformApiCalls: []
       });
     });
-  });*/
+  });
 
   it("Webhook Not Valid - Should Unsubscibe", () => {
     return testScenario({ connectorConfig }, ({ handlers, nock, expect }) => {

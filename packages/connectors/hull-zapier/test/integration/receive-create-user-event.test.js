@@ -94,7 +94,7 @@ it("Receive Create User", () => {
   });
 });
 
-/*
+
 it("Receive New Subscription And Merge With Existing Subscriptions", () => {
   return testScenario({ connectorConfig }, ({ handlers, nock, expect }) => {
     return {
@@ -198,4 +198,4 @@ it("Receive New Subscription And Unable To Merge With Existing Subscriptions", (
       ]
     };
   });
-});*/
+});
