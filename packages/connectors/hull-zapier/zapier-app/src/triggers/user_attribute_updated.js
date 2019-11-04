@@ -1,4 +1,4 @@
-const sample = require("../../samples/user");
+const sample = require("../../samples/user-attribute-updated");
 const { triggerBuilder } = require("../lib");
 const { getUserAttributes } = require("../lib/input-fields");
 const { performAttributesUpdatedTrigger } = require("../lib/perform-trigger");

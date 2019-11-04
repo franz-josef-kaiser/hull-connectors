@@ -1,4 +1,4 @@
-const sample = require("../../samples/account");
+const sample = require("../../samples/account-entered-segment");
 const { triggerBuilder } = require("../lib");
 const { getAccountSegments } = require("../lib/input-fields");
 const { performSegmentChangedTrigger } = require("../lib/perform-trigger");

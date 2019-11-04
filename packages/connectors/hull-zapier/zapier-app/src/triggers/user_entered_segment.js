@@ -1,4 +1,4 @@
-const sample = require("../../samples/user");
+const sample = require("../../samples/user-entered-segment");
 const { triggerBuilder } = require("../lib");
 const { getUserSegments } = require("../lib/input-fields");
 const { performSegmentChangedTrigger } = require("../lib/perform-trigger");

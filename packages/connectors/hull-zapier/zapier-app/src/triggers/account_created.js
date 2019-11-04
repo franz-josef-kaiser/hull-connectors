@@ -1,4 +1,4 @@
-const sample = require( "../../samples/user");
+const sample = require( "../../samples/account-created");
 const { triggerBuilder } = require("../lib");
 const { performEntityCreatedTrigger } = require("../lib/perform-trigger");
 const { getAccountSegments, getEmpty } = require("../lib/input-fields");

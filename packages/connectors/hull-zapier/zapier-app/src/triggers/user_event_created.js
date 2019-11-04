@@ -1,4 +1,4 @@
-const sample = require("../../samples/user");
+const sample = require("../../samples/user-event-created");
 const { triggerBuilder } = require("../lib");
 const { getUserEventSchema } = require("../lib/input-fields");
 const { performEventCreatedTrigger } = require("../lib/perform-trigger");
