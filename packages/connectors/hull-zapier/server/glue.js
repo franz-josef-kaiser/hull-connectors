@@ -85,8 +85,6 @@ const glue = {
     iterateL("${zaps}", { key: "zap", async: true }, [
       set("zap_url", "${zap.url}"),
       set("resp", zapier("sendZap", input()))
-
-      // TODO if error status code === 410, remove url from subscriptions
     ])
   ],
   accountUpdateStart: [

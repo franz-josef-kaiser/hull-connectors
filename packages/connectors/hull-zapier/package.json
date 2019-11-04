@@ -1,7 +1,7 @@
 {
   "name": "hull-zapier",
   "description": "A Hull <> Zapier Connector",
-  "version": "0.0.1",
+  "version": "0.1.8-monorepo",
   "homepage": "https://github.com/hull-ships/hull-zapier",
   "license": "MIT",
   "main": "bin/start",
@@ -19,7 +19,8 @@
   },
   "scripts": {
     "test": "yarn test:unit",
-    "test:unit": "NODE_ENV=test mocha --exit --require ../../../root-babel-register.js -R spec ./test/unit"
+    "test:unit": "NODE_ENV=test mocha --exit --require ../../../root-babel-register.js -R spec ./test/unit",
+    "documentation": "exit 0"
   },
   "keywords": [
     "hull",
