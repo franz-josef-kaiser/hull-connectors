@@ -1,19 +1,18 @@
-import _ from "lodash";
-import sample from "../../samples/user_event.json";
-import { createUrl } from "../config";
-import { post } from "../lib/request";
+const _ = require("lodash");
+const sample = require("../../samples/user");
+const { createUrl } = require("../config");
+const { post } = require("../lib/request");
 
 const perform = async (z, { inputData }) => {
-  const { external_id, email, name, properties } = inputData;
-  const claims = _.pickBy({ email, external_id }, (v, _k) => v !== undefined);
-  return post({
-    z,
+  const { external_id, email, event_name, properties } = inputData;
+  const claims = _.pickBy({ email, external_id }, (v, _k) => !_.isEmpty(v));
+  return post(z,{
     url: createUrl,
-    body: { entityType: "user_event", claims, name, properties }
+    body: { entityType: "user_event", claims, event_name, properties }
   });
 };
 
-const action = {
+const user_event = {
   key: "user_event",
   noun: "User Event",
 
@@ -29,6 +28,7 @@ const action = {
     inputFields: [
       {
         key: "email",
+        list: false,
         label: "Email",
         helpText:
           "The email to associate the event to. If multiple emails are found in Hull, event will be associated to the oldest entry",
@@ -36,14 +36,16 @@ const action = {
       },
       {
         key: "external_id",
+        list: false,
         helpText:
           "The external_id of the user to associate the event to. Takes precedence over the email if present",
         label: "External ID",
         required: false
       },
       {
-        key: "name",
+        key: "event_name",
         label: "Event Name",
+        list: false,
         helpText:
           "The Name of the event, such as 'Email Opened', 'Subscription Added', etc.",
         required: false
@@ -57,10 +59,11 @@ const action = {
       }
     ],
     perform,
-    // Sample data that the user will see if they skip the test
-    // step in the Zap Editor
+
     sample
   }
 };
 
-export default action;
+module.exports = {
+  user_event
+};

@@ -18,9 +18,8 @@
     "url": "https://github.com/hull-ships/hull-zapier/issues"
   },
   "scripts": {
-    "test": "yarn test:unit && yarn test:integration",
-    "test:unit": "NODE_ENV=test mocha --exit --require ../../../root-babel-register.js -R spec ./test/unit",
-    "test:integration": "NODE_ENV=test mocha --exit --require ../../../root-babel-register.js -R spec ./test/integration/{*.js,**/*.js}"
+    "test": "yarn test:unit",
+    "test:unit": "NODE_ENV=test mocha --exit --require ../../../root-babel-register.js -R spec ./test/unit"
   },
   "keywords": [
     "hull",

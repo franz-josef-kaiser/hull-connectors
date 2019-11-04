@@ -1,9 +1,17 @@
-import sample from "../../samples/user.json";
-import triggerBuilder from "../lib/trigger-builder";
+const sample = require( "../../samples/user");
+const { triggerBuilder } = require("../lib");
+const { performEntityCreatedTrigger } = require("../lib/perform-trigger");
+const { getUserSegments, getEmpty } = require("../lib/input-fields");
 
-const trigger = triggerBuilder({
+const user_created = triggerBuilder({
+  getInputFields: getUserSegments,
+  performTrigger: performEntityCreatedTrigger,
   sample,
-  noun: "user",
+  description: "User Created",
+  entityType: "user",
   action: "created"
 });
-export default trigger;
+
+module.exports = {
+  user_created
+};

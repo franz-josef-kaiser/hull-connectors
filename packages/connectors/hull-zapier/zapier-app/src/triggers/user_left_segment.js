@@ -1,11 +1,17 @@
-import sample from "../../samples/user.json";
-import triggerBuilder from "../lib/trigger-builder";
-import { userSegment } from "../lib/subscription-input-fields";
+const sample = require("../../samples/user");
+const { triggerBuilder } = require("../lib");
+const { getUserSegments } = require("../lib/input-fields");
+const { performSegmentChangedTrigger } = require("../lib/perform-trigger");
 
-const trigger = triggerBuilder({
-  inputFields: userSegment,
+const user_left_segment = triggerBuilder({
+  getInputFields: getUserSegments,
+  performTrigger: performSegmentChangedTrigger,
   sample,
-  noun: "user",
+  description: "User Left Segment Trigger",
+  entityType: "user",
   action: "left_segment"
 });
-export default trigger;
+
+module.exports = {
+  user_left_segment
+};

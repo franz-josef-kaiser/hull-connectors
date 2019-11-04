@@ -1,27 +1,21 @@
-// import account_created from "./account_created";
-import account_deleted from "./account_deleted";
-import account_entered_segment from "./account_entered_segment";
-import account_left_segment from "./account_left_segment";
-import account_updated from "./account_updated";
-// import user_created from "./user_created";
-import user_deleted from "./user_deleted";
-import user_entered_segment from "./user_entered_segment";
-import user_event_created from "./user_event_created";
-import user_left_segment from "./user_left_segment";
-import user_updated from "./user_updated";
+const { user_entered_segment } = require("./user_entered_segment");
+const { user_left_segment } = require("./user_left_segment");
+const { user_attribute_updated } = require("./user_attribute_updated");
+const { user_event_created } = require("./user_event_created");
+const { account_entered_segment } = require("./account_entered_segment");
+const { account_left_segment } = require("./account_left_segment");
+const { account_attribute_updated } = require("./account_attribute_updated");
+const { user_created } = require("./user_created");
+const { account_created } = require("./account_created");
 
-// It seems the hooks in Resources aren't able to properly get deletions and updates
-// Implement them manually here
 module.exports = {
-  // account_created,
-  account_deleted,
+  user_entered_segment,
+  user_left_segment,
+  user_attribute_updated,
+  user_event_created,
   account_entered_segment,
   account_left_segment,
-  account_updated,
-  // user_created,
-  user_deleted,
-  user_entered_segment,
-  user_event_created,
-  user_left_segment,
-  user_updated
+  account_attribute_updated,
+  user_created,
+  account_created
 };

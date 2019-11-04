@@ -1,11 +1,17 @@
-import sample from "../../samples/account.json";
-import triggerBuilder from "../lib/trigger-builder";
-import { accountSegment } from "../lib/subscription-input-fields";
+const sample = require("../../samples/account");
+const { triggerBuilder } = require("../lib");
+const { getAccountSegments } = require("../lib/input-fields");
+const { performSegmentChangedTrigger } = require("../lib/perform-trigger");
 
-const trigger = triggerBuilder({
-  inputFields: accountSegment,
+const account_entered_segment = triggerBuilder({
+  getInputFields: getAccountSegments,
+  performTrigger: performSegmentChangedTrigger,
   sample,
-  noun: "account",
+  description: "Account Entered Segment Trigger",
+  entityType: "account",
   action: "entered_segment"
 });
-export default trigger;
+
+module.exports = {
+  account_entered_segment
+};

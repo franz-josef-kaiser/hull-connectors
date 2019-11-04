@@ -59,6 +59,20 @@ function isNotEqual(param: string, value) {
   };
 }
 
+function inputIsEmpty(param: string) {
+  return (context, input) => {
+    const contextVariable = _.get(input, param);
+    return _.isEmpty(contextVariable);
+  };
+}
+
+function inputIsNotEmpty(param: string) {
+  return (context, input) => {
+    const contextVariable = _.get(input, param);
+    return !_.isEmpty(contextVariable);
+  };
+}
+
 function inputIsNotEqual(param: string, value) {
   return (context, input) => {
     const contextVariable = _.get(input, param);
@@ -82,6 +96,8 @@ module.exports = {
   doesContain,
   inputIsNotEqual,
   inputIsEqual,
+  inputIsNotEmpty,
+  inputIsEmpty,
   isServiceAttribute,
   not
 };

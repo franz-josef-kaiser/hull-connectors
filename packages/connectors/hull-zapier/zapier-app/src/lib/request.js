@@ -1,4 +1,4 @@
-const req = async ({ z, url, body, method = "POST" }) => {
+const req = async (z, { url, body, method = "POST" }) => {
   const response = await z.request({
     url,
     body,
@@ -7,6 +7,12 @@ const req = async ({ z, url, body, method = "POST" }) => {
   return response.json;
 };
 
-export const post = async (z, opts) => req(z, { method: "POST", ...opts });
-export const del = async (z, opts) => req(z, { method: "DELETE", ...opts });
-export const get = async (z, opts) => req(z, { method: "POST", ...opts });
+const post = async (z, opts) => req(z, { method: "POST", ...opts });
+const del = async (z, opts) => req(z, { method: "DELETE", ...opts });
+const get = async (z, opts) => req(z, { method: "POST", ...opts });
+
+module.exports = {
+  post,
+  del,
+  get
+};

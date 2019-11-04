@@ -5,43 +5,57 @@ import { post } from "../lib/request";
 
 const perform = async (z, { inputData }) => {
   const { external_id, domain, attributes } = inputData;
-  const claims = _.pickBy({ domain, external_id }, (v, _k) => v !== undefined);
-  return post({
-    z,
+  const claims = _.pickBy({ domain, external_id }, (v, _k) => !_.isEmpty(v));
+  return post(z, {
     url: createUrl,
     body: { entityType: "account", claims, attributes }
   });
 };
 
-const action = {
+const account = {
   key: "account",
   noun: "Account",
 
   display: {
-    // What the user will see in the Zap Editor when selecting an action
-    label: "Create or update Account",
+    label: "Create or Update a Hull Account",
     description:
-      "Sends Attribute updates to the account identified by a domain. Will create the Account if not created already"
+      "Sends Attribute updates to the account identified by a domain. Will create the account if not created already."
   },
 
   operation: {
-    // Data users will be asked to set in the Zap Editor
     inputFields: [
-      { key: "domain", type: "string", label: "Domain", required: false },
       {
-        key: "external_id",
-        helpText:
-          "The external_id of the account to find/create. Takes precedence over the email if present",
-        label: "External ID",
-        required: false
+        required: false,
+        list: false,
+        label: 'External Id',
+        helpText: 'External Id of the Hull Account',
+        key: 'external_id',
+        type: 'string',
+        altersDynamicFields: false
       },
-      { key: "attributes", label: "Attributes to update", required: false }
+      {
+        required: false,
+        list: false,
+        label: 'Domain',
+        helpText: 'Domain of the Hull Account',
+        key: 'domain',
+        type: 'string',
+        altersDynamicFields: false
+      },
+      {
+        default: 'Attributes of the Hull Account',
+        required: false,
+        label: 'Attributes',
+        dict: true,
+        key: 'attributes',
+        altersDynamicFields: false
+      }
     ],
     perform,
-    // Sample data that the user will see if they skip the test
-    // step in the Zap Editor
     sample
   }
 };
 
-export default action;
+module.exports = {
+  account
+};

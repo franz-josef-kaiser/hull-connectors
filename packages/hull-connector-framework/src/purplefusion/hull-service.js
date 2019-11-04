@@ -12,7 +12,9 @@ const {
   HullIncomingUser,
   HullIncomingAccount,
   HullApiAttributeDefinition,
-  HullIncomingUserImportApi
+  HullIncomingUserImportApi,
+  HullApiSegmentDefinition,
+  HullApiEventDefinition
 } = require("./hull-service-objects");
 
 // should be a generically instantiated class which take
@@ -171,6 +173,24 @@ class HullSdk {
       return response;
     });
   }
+
+  getUserSegments() {
+    return this.client.get("/users_segments").then((response) => {
+      return response;
+    });
+  }
+
+  getAccountSegments() {
+    return this.client.get("/accounts_segments").then((response) => {
+      return response;
+    });
+  }
+
+  getUserEvents() {
+    return this.client.get("/search/event/bootstrap").then((response) => {
+      return response;
+    });
+  }
 }
 
 const hullService: CustomApi = {
@@ -218,6 +238,21 @@ const hullService: CustomApi = {
       method: "getAccountAttributes",
       endpointType: "byId",
       output: HullApiAttributeDefinition
+    },
+    getUserSegments: {
+      method: "getUserSegments",
+      endpointType: "byId",
+      output: HullApiSegmentDefinition
+    },
+    getAccountSegments: {
+      method: "getAccountSegments",
+      endpointType: "byId",
+      output: HullApiSegmentDefinition
+    },
+    getUserEvents: {
+      method: "getUserEvents",
+      endpointType: "byId",
+      output: HullApiEventDefinition
     },
     outgoingSkip: {
       method: "outgoingSkip",

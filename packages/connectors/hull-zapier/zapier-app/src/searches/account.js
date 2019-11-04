@@ -1,12 +1,11 @@
-import sample from "../../samples/account.json";
-import { schemaUrl, searchUrl } from "../config";
-import { post } from "../lib/request";
+const sample = require("../../samples/account.json");
+const { schemaUrl, searchUrl } = require("../config");
+const { post } = require("../lib/request");
 
 const perform = async (z, { inputData }) => {
   const { email, external_id } = inputData;
   const claims = { email, external_id };
-  return post({
-    z,
+  return post(z,{
     url: searchUrl,
     body: { claims, entityType: "account" }
   });

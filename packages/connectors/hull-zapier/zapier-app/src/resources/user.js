@@ -1,8 +1,9 @@
-import _ from "lodash";
-import sample from "../../samples/user.json";
-import { schemaUrl, searchUrl, createUrl } from "../config";
-import { post } from "../lib/request";
-import { subscribe, unsubscribe } from "../lib/subscribes";
+const _ = require("lodash");
+const sample = require("../../samples/account.json");
+const { schemaUrl, searchUrl, createUrl } = require("../config");
+const { post }  = require("../lib/request");
+const { subscribe, unsubscribe } = require("../lib");
+
 
 const entityType = "user";
 
@@ -53,8 +54,7 @@ const user = {
       ],
       perform: async (z, { inputData }) => {
         const { email, external_id } = inputData;
-        return post({
-          z,
+        return post(z, {
           url: searchUrl,
           body: { claims: { email, external_id }, entityType }
         });
@@ -83,8 +83,7 @@ const user = {
       ],
       perform: async (z, { inputData }) => {
         const { external_id, email, attributes } = inputData;
-        return post({
-          z,
+        return post(z, {
           url: createUrl,
           body: {
             entityType,

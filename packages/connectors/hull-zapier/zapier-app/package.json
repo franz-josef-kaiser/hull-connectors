@@ -1,6 +1,6 @@
 {
-  "name": "zapier-hull",
-  "version": "1.0.0",
+  "name": "hull-zapier",
+  "version": "1.0.1",
   "description": "A Hull app for the Zapier platform",
   "repository": "hull-ships/hull-zapier",
   "homepage": "https://hull.io/",
@@ -22,9 +22,10 @@
   "dependencies": {
     "@babel/runtime": "^7.6.0",
     "babel-polyfill": "^6.26.0",
-    "zapier-platform-core": "8.3.0"
+    "zapier-platform-core": "8.4.1"
   },
   "devDependencies": {
+    "dotenv": "8.2.0",
     "@babel/cli": "^7.6.0",
     "@babel/core": "^7.6.0",
     "@babel/node": "^7.6.1",
@@ -42,6 +43,7 @@
     "babel-loader": "^8.0.6",
     "babel-plugin-lodash": "^3.3.4",
     "mocha": "^6.2.0",
+    "nock": "10.0.6",
     "should": "^13.2.3"
   }
 }

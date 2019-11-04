@@ -1,8 +1,8 @@
-import _ from "lodash";
-import sample from "../../samples/account.json";
-import { schemaUrl, searchUrl, createUrl } from "../config";
-import { post } from "../lib/request";
-import { subscribe, unsubscribe } from "../lib/subscribes";
+const _ = require("lodash");
+const sample = require("../../samples/account.json");
+const { schemaUrl, searchUrl, createUrl } = require("../config");
+const { post }  = require("../lib/request");
+const { subscribe, unsubscribe } = require("../lib");
 
 const entityType = "account";
 

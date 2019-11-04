@@ -1,9 +1,9 @@
-import user from "./user";
-// import account from "./account";
-import user_event from "./user_event";
+const { user } = require("./user");
+const { account } = require("./account");
+const { user_event } = require("./user_event");
 
 module.exports = {
   user,
-  // account,
+  account,
   user_event
 };

@@ -15,7 +15,7 @@
   "private_settings": [
     {
       "name": "subscriptions",
-      "title": "Rest Hook Subscripitons",
+      "title": "Rest Hook Subscriptions",
       "type": "array",
       "format": "hidden",
       "items": {
@@ -29,13 +29,24 @@
           },
           "entityType": {
             "type": "string"
-          },
-          "value": {
-            "type": "string"
           }
         }
       },
       "default": []
+    },
+    {
+      "name": "send_all_user_attributes",
+      "title": "Sending all user attributes by default",
+      "type": "boolean",
+      "default": true,
+      "format": "hidden"
+    },
+    {
+      "name": "send_all_account_attributes",
+      "title": "Sending all account attributes by default",
+      "type": "boolean",
+      "default": true,
+      "format": "hidden"
     },
     {
       "name": "synchronized_user_segments",
@@ -92,31 +103,62 @@
       "properties": [
         "private_settings.synchronized_user_segments",
         "private_settings.synchronized_account_segments",
-        "private_settings.events"
+        "private_settings.synchronized_events"
       ]
+    }
+  ],
+  "incoming": [
+    {
+      "url": "/subscribe",
+      "handler": "subscribe",
+      "options": {
+        "credentialsFromQuery": true,
+        "bodyParser": "json"
+      }
+    },
+    {
+      "url": "/unsubscribe",
+      "handler": "unsubscribe",
+      "options": {
+        "credentialsFromQuery": true,
+        "bodyParser": "json"
+      }
+    },
+    {
+      "url": "/create",
+      "handler": "create",
+      "options": {
+        "credentialsFromQuery": true,
+        "bodyParser": "json"
+      }
+    },
+    {
+      "url": "/search",
+      "handler": "search",
+      "options": {
+        "credentialsFromQuery": true,
+        "bodyParser": "json"
+      }
     }
   ],
   "json": [
     {
       "url": "/auth",
-      "handler": "authHandler"
+      "handler": "auth"
     },
     {
-      "url": "/create",
-      "handler": "createHandler",
+      "url": "/segments",
+      "handler": "segments",
       "options": {
         "respondWithError": true
       }
     },
     {
-      "url": "/subscribe",
-      "handler": "subscribeHandler",
-      "options": {}
-    },
-    {
-      "url": "/unsubscribe",
-      "handler": "unsubscribeHandler",
-      "options": {}
+      "url": "/schema",
+      "handler": "schema",
+      "options": {
+        "respondWithError": true
+      }
     },
     {
       "url": "/credentials",
@@ -125,28 +167,7 @@
       "title": "Credentials",
       "description": "The Token to pass to Zapier",
       "type": "string",
-      "handler": "credentialsHandler"
-    },
-    {
-      "url": "/search",
-      "handler": "searchHandler",
-      "options": {
-        "respondWithError": true
-      }
-    },
-    {
-      "url": "/schema",
-      "handler": "schemaHandler",
-      "options": {
-        "respondWithError": true
-      }
-    },
-    {
-      "url": "/segments",
-      "handler": "segmentsHandler",
-      "options": {
-        "respondWithError": true
-      }
+      "handler": "credentials"
     }
   ],
   "subscriptions": [

@@ -1,28 +1,35 @@
-import _ from "lodash";
-import { subscribe, unsubscribe } from "./subscribes";
+const _ = require("lodash");
+const { subscribe } = require("./subscribe");
+const { unsubscribe } = require("./unsubscribe");
 
-export default function triggerBuilder({ inputFields, noun, action }) {
+function triggerBuilder({
+  getInputFields,
+  performTrigger,
+  entityType,
+  action,
+  description
+}) {
   const titleAction = _.startCase(action);
-  const titleNoun = _.startCase(noun);
+  const titleNoun = _.startCase(entityType);
   return {
-    key: `${noun}_${action}`,
-
-    // You'll want to provide some helpful display labels and descriptions
-    // for users. Zapier will put them into the UX.
-    noun,
-    display: {
-      label: `${titleNoun} ${titleAction}`,
-      description: `Trigger when an ${titleNoun} is ${titleAction}.`
-    },
-
-    // `operation` is where we make the call to your API
     operation: {
-      inputFields: _.compact([inputFields]),
-      resource: noun,
       type: "hook",
-      performSubscribe: subscribe({ entityType: noun, action }),
-      performUnsubscribe: unsubscribe({ entityType: noun, action }),
-      perform: (z, bundle) => [bundle.cleanedRequest]
-    }
+      perform: performTrigger({ entityType, action }),
+      performSubscribe: subscribe({ entityType, action }),
+      performUnsubscribe: unsubscribe({ entityType, action }),
+      inputFields: [getInputFields]
+    },
+    noun: entityType,
+    display: {
+      hidden: false,
+      important: true,
+      description,
+      label: `${titleNoun} ${titleAction}`
+    },
+    key: `${entityType}_${action}`
   };
 }
+
+module.exports = {
+  triggerBuilder
+};

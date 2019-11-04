@@ -1,11 +1,15 @@
-import sample from "../../samples/user.json";
-import triggerBuilder from "../lib/trigger-builder";
-import { userSegment } from "../lib/subscription-input-fields";
+const sample = require( "../../samples/user.json");
+const { triggerBuilder } = require("../lib");
+const { performEntityDeletedTrigger } = require("../lib/perform-trigger");
 
-const trigger = triggerBuilder({
-  inputFields: userSegment,
+const user_deleted = triggerBuilder({
+  performTrigger: performEntityDeletedTrigger,
   sample,
-  noun: "user",
+  description: "User Attribute Updated",
+  entityType: "user",
   action: "deleted"
 });
-export default trigger;
+
+module.exports = {
+  user_deleted
+};

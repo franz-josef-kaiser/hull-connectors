@@ -1,9 +1,20 @@
-const url = "https://hull-zapier.eu.ngrok.io";
+// require("dotenv").config();
+const url = process.env.CONNECTOR_URL;
 
-export const authUrl = `${url}/auth`;
-export const createUrl = `${url}/create`;
-export const schemaUrl = `${url}/schema`;
-export const segmentsUrl = `${url}/segments`;
-export const searchUrl = `${url}/search`;
-export const subscribeUrl = `${url}/subscribe`;
-export const unsubscribeUrl = `${url}/unsubscribe`;
+const authUrl = `${url}/auth`;
+const createUrl = `${url}/create`;
+const schemaUrl = `${url}/schema`;
+const segmentsUrl = `${url}/segments`;
+const searchUrl = `${url}/search`;
+const subscribeUrl = `${url}/subscribe`;
+const unsubscribeUrl = `${url}/unsubscribe`;
+
+module.exports = {
+  subscribeUrl,
+  unsubscribeUrl,
+  segmentsUrl,
+  schemaUrl,
+  searchUrl,
+  authUrl,
+  createUrl
+};

@@ -1,11 +1,15 @@
-import sample from "../../samples/account.json";
-import triggerBuilder from "../lib/trigger-builder";
-import { accountSegment } from "../lib/subscription-input-fields";
+const sample = require( "../../samples/account.json");
+const { triggerBuilder } = require("../lib");
+const { performEntityDeletedTrigger } = require("../lib/perform-trigger");
 
-const trigger = triggerBuilder({
-  inputFields: accountSegment,
+const account_deleted = triggerBuilder({
+  performTrigger: performEntityDeletedTrigger,
   sample,
-  noun: "account",
+  description: "Account Attribute Updated",
+  entityType: "account",
   action: "deleted"
 });
-export default trigger;
+
+module.exports = {
+  account_deleted
+};

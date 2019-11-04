@@ -1,11 +1,17 @@
-import sample from "../../samples/user_event.json";
-import triggerBuilder from "../lib/trigger-builder";
-import { userEventSchema } from "../lib/subscription-input-fields";
+const sample = require("../../samples/user");
+const { triggerBuilder } = require("../lib");
+const { getUserEventSchema } = require("../lib/input-fields");
+const { performEventCreatedTrigger } = require("../lib/perform-trigger");
 
-const trigger = triggerBuilder({
-  inputFields: userEventSchema,
+const user_event_created = triggerBuilder({
+  getInputFields: getUserEventSchema,
+  performTrigger: performEventCreatedTrigger,
   sample,
-  noun: "user_event",
+  description: "User Event Occurred",
+  entityType: "user_event",
   action: "created"
 });
-export default trigger;
+
+module.exports = {
+  user_event_created
+};
