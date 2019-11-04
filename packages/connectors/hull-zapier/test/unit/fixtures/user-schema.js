@@ -73,8 +73,6 @@ module.exports = {
   ],
   "result": {
     "data": [
-      {"label": "account.domain", "value": "account.domain"},
-      {"label": "account.salesforce/industry", "value": "account.salesforce/industry"},
       {"label": "email", "value": "email"},
       {"label": "salesforce_contact/department", "value": "salesforce_contact/department"}
     ],

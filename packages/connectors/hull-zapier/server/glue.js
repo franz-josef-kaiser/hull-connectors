@@ -193,7 +193,7 @@ const glue = {
     ]),
     ifL(cond("isEqual", input("body.entityType"), "user"), [
       set("rawEntitySchema", hull("getUserAttributes")),
-      set("entitySchema", jsonata(`[$.{"value": $replace(key, "traits_", ""), "label": $replace(key, "traits_", "")}]`, "${rawEntitySchema}"))
+      set("entitySchema", jsonata(`$[$not($contains(key, "account."))].{"value": $replace(key, "traits_", ""), "label": $replace(key, "traits_", "")}`, "${rawEntitySchema}"))
     ]),
     ifL(cond("isEqual", input("body.entityType"), "account"), [
       set("rawEntitySchema", hull("getAccountAttributes")),
