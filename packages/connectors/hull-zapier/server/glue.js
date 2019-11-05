@@ -176,14 +176,20 @@ const glue = {
     status: 200
   }),
   search: returnValue([
-    set("entityType", input("body.entityType")),
-    ifL(cond("isEqual", "${entityType}", "account"), {
-      do: [],
-      eldo: []
-    })],{
-    data: {
-      ok: true
-    },
+    set("entityClaims", input("body.claims")),
+    set("transformedEntities", []),
+
+    ifL(cond("isEqual", input("body.entityType"), "user"), [
+      set("foundEntities", hull("getUser", "${entityClaims}")),
+      set("transformedEntities", jsonata(`$.[{"user": user}, {"segments": segments}, {"account": account}, {"account_segments": account_segments}]`, "${foundEntities}"))
+    ]),
+    ifL(cond("isEqual", input("body.entityType"), "account"), [
+      set("foundEntities", hull("getAccount", "${entityClaims}")),
+      set("transformedEntities", jsonata(`$.[{"account": account}, {"account_segments": account_segments}]`, "${foundEntities}"))
+
+    ]),
+    ],{
+    data: "${transformedEntities}",
     status: 200
   }),
   schema: returnValue([

@@ -1,7 +1,7 @@
-// import user from "./user";
-// import account from "./account";
+const { user } = require("./user");
+const { account } = require("./account");
 
 module.exports = {
-  // user
-  // account
+  user,
+  account
 };

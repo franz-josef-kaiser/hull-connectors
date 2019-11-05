@@ -3,7 +3,7 @@ const authentication = require("./authentication");
 const triggers = require("./triggers");
 const version = require("../package.json").version;
 
-const searches = {};
+const searches = require("./searches");
 const creates = require("./creates");
 const resources = {};
 
@@ -46,5 +46,4 @@ const App = {
   creates
 };
 
-// Finally, export the app.
 module.exports = App;

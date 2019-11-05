@@ -25,12 +25,14 @@ class HullSdk {
 
   client: Client;
   api: CustomApi;
+  entities: Object;
   metricsClient: MetricAgent;
   loggerClient: HullClientLogger;
   helpers: Object;
   globalContext: HullVariableContext;
 
   constructor(globalContext: HullVariableContext, api: CustomApi) {
+    this.entities = globalContext.reqContext().entities;
     this.client = globalContext.reqContext().client;
     this.api = api;
     this.loggerClient = globalContext.reqContext().client.logger;
@@ -162,30 +164,47 @@ class HullSdk {
     return this.helpers.settingsUpdate(settings);
   }
 
+  getUser(claims: any) {
+    return this.entities.users.get({ claims }).then((response) => {
+      return response;
+    });
+  }
+
+  getAccount(claims: any) {
+    return this.entities.accounts.get({ claims }).then((response) => {
+      return response;
+    });
+  }
+
+  // TODO use entities.users.getSchema
   getUserAttributes() {
     return this.client.get("/users/schema").then((response) => {
       return response;
     });
   }
 
+  // TODO use entities.accounts.getSchema
   getAccountAttributes() {
     return this.client.get("/accounts/schema").then((response) => {
       return response;
     });
   }
 
+  // TODO use entities.users.getSegments
   getUserSegments() {
     return this.client.get("/users_segments").then((response) => {
       return response;
     });
   }
 
+  // TODO use entities.accounts.getSegments
   getAccountSegments() {
     return this.client.get("/accounts_segments").then((response) => {
       return response;
     });
   }
 
+  // TODO use entities.events.getSchema
   getUserEvents() {
     return this.client.get("/search/event/bootstrap").then((response) => {
       return response;
@@ -253,6 +272,18 @@ const hullService: CustomApi = {
       method: "getUserEvents",
       endpointType: "byId",
       output: HullApiEventDefinition
+    },
+    getUser: {
+      method: "getUser",
+      endpointType: "byId",
+      input: Object,
+      output: HullIncomingUser
+    },
+    getAccount: {
+      method: "getAccount",
+      endpointType: "byId",
+      input: Object,
+      output: HullIncomingAccount
     },
     outgoingSkip: {
       method: "outgoingSkip",
