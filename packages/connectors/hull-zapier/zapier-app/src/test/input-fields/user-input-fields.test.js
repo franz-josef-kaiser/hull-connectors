@@ -4,6 +4,7 @@ const _ = require("lodash");
 const zapier = require('zapier-platform-core');
 
 process.env.CONNECTOR_URL = "https://hull-zapier.ngrok.io";
+process.env.TOKEN = "YOUR_TOKEN";
 
 const App = require('../../index');
 const appTester = zapier.createAppTester(App);
@@ -23,8 +24,10 @@ describe('Input Fields Test', () => {
       }
     };
 
+    console.log(`connector url: ${connector_url}`);
+
     nock(connector_url)
-      .post("/segments?token=YOUR_TOKEN")
+      .post("/segments?token=YOUR_TOKEN", { "entityType": "user" })
       .reply(200, [
         {"label": "UserSegment1", "value": "1"}, {"label": "UserSegment2", "value": "2"}
       ]);

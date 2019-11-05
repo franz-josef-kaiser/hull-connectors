@@ -4,6 +4,7 @@ const _ = require("lodash");
 const zapier = require('zapier-platform-core');
 
 process.env.CONNECTOR_URL = "https://hull-zapier.ngrok.io";
+process.env.TOKEN = "YOUR_TOKEN";
 
 const App = require('../../index');
 const appTester = zapier.createAppTester(App);
