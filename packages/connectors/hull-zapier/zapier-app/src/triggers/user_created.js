@@ -7,7 +7,7 @@ const user_created = triggerBuilder({
   getInputFields: getUserSegments,
   performTrigger: performEntityCreatedTrigger,
   sample,
-  description: "User Created",
+  description: "Triggers when a user is created.",
   entityType: "user",
   action: "created"
 });

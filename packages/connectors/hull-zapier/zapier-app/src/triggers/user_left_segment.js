@@ -7,7 +7,7 @@ const user_left_segment = triggerBuilder({
   getInputFields: getUserSegments,
   performTrigger: performSegmentChangedTrigger,
   sample,
-  description: "User Left Segment Trigger",
+  description: "Triggers when a user leaves a segment.",
   entityType: "user",
   action: "left_segment"
 });

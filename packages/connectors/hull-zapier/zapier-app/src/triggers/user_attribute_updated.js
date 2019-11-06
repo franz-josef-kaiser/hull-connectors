@@ -7,7 +7,7 @@ const user_attribute_updated = triggerBuilder({
   getInputFields: getUserAttributes,
   performTrigger: performAttributesUpdatedTrigger,
   sample,
-  description: "User Attribute Updated",
+  description: "Triggers when a user attribute is updated.",
   entityType: "user",
   action: "attribute_updated"
 });

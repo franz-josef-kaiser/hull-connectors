@@ -5,7 +5,7 @@ const { performEntityDeletedTrigger } = require("../lib/perform-trigger");
 const user_deleted = triggerBuilder({
   performTrigger: performEntityDeletedTrigger,
   sample,
-  description: "User Attribute Updated",
+  description: "Triggers when a user is deleted",
   entityType: "user",
   action: "deleted"
 });

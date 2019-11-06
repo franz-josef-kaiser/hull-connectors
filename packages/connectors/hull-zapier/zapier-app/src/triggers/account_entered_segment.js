@@ -7,7 +7,7 @@ const account_entered_segment = triggerBuilder({
   getInputFields: getAccountSegments,
   performTrigger: performSegmentChangedTrigger,
   sample,
-  description: "Account Entered Segment Trigger",
+  description: "Triggers when an account enters a segment.",
   entityType: "account",
   action: "entered_segment"
 });

@@ -7,7 +7,7 @@ const account_created = triggerBuilder({
   getInputFields: getAccountSegments,
   performTrigger: performEntityCreatedTrigger,
   sample,
-  description: "Account Created",
+  description: "Triggers when an account is created.",
   entityType: "account",
   action: "created"
 });

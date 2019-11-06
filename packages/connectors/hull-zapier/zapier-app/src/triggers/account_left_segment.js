@@ -7,7 +7,7 @@ const account_left_segment = triggerBuilder({
   getInputFields: getAccountSegments,
   performTrigger: performSegmentChangedTrigger,
   sample,
-  description: "Account Left Segment Trigger",
+  description: "Triggers when an account leaves a segment.",
   entityType: "account",
   action: "left_segment"
 });

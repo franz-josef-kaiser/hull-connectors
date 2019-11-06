@@ -5,7 +5,7 @@ const { performEntityDeletedTrigger } = require("../lib/perform-trigger");
 const account_deleted = triggerBuilder({
   performTrigger: performEntityDeletedTrigger,
   sample,
-  description: "Account Attribute Updated",
+  description: "Triggers when an account is deleted.",
   entityType: "account",
   action: "deleted"
 });

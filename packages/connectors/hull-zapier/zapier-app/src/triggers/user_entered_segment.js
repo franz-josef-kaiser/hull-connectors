@@ -7,9 +7,10 @@ const user_entered_segment = triggerBuilder({
   getInputFields: getUserSegments,
   performTrigger: performSegmentChangedTrigger,
   sample,
-  description: "User Entered Segment Trigger",
+  description: "Triggers when a user enters a segment.",
   entityType: "user",
-  action: "entered_segment"
+  action: "entered_segment",
+  important: true
 });
 
 module.exports = {

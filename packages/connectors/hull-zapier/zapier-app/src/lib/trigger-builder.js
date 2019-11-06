@@ -14,12 +14,14 @@ function triggerBuilder({
   entityType,
   action,
   description,
-  sample
+  sample,
+  important = false
 }) {
   const titleAction = _.startCase(action);
   const titleNoun = _.startCase(entityType);
   return {
     operation: {
+      sample,
       type: "hook",
       performList: getSample({ sample }),
       perform: performTrigger({ entityType, action }),
@@ -30,7 +32,7 @@ function triggerBuilder({
     noun: entityType,
     display: {
       hidden: false,
-      important: true,
+      important,
       description,
       label: `${titleNoun} ${titleAction}`
     },

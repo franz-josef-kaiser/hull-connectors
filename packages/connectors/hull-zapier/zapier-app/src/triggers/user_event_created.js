@@ -7,7 +7,7 @@ const user_event_created = triggerBuilder({
   getInputFields: getUserEventSchema,
   performTrigger: performEventCreatedTrigger,
   sample,
-  description: "User Event Occurred",
+  description: "Triggers when a user event is created.",
   entityType: "user_event",
   action: "created"
 });

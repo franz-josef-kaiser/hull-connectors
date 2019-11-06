@@ -7,7 +7,7 @@ const account_attribute_updated = triggerBuilder({
   getInputFields: getAccountAttributes,
   performTrigger: performAttributesUpdatedTrigger,
   sample,
-  description: "Account Attribute Updated",
+  description: "Triggers when an account attribute updated.",
   entityType: "account",
   action: "attribute_updated"
 });
