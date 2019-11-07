@@ -11481,6 +11481,14 @@ pascalcase@^0.1.1:
   resolved "https://registry.yarnpkg.com/pascalcase/-/pascalcase-0.1.1.tgz#b363e55e8006ca6fe21784d2db22bd15d7917f14"
   integrity sha1-s2PlXoAGym/iF4TS2yK9FdeRfxQ=
 
+passport-aircall@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/passport-aircall/-/passport-aircall-0.0.1.tgz#514a12446baa0e2f6d6ab8cabdffc7a630cd6402"
+  integrity sha512-A637L4mSqEN0EHE0A+7x66+AAC6OIi7Su1Dvi48Oqov+BC59odybMG/iSWAfVWzsxA7Y6Y0dF4AbXzpRmymf3Q==
+  dependencies:
+    npm "^6.1.0"
+    passport-oauth2 "1.x.x"
+
 passport-hubspot-oauth2.0@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/passport-hubspot-oauth2.0/-/passport-hubspot-oauth2.0-1.0.2.tgz#70cf9ff314fe6f2ea33e7941979c483850e689c0"

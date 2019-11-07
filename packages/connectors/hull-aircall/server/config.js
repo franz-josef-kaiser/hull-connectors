@@ -11,9 +11,16 @@ export default function connectorConfig(): HullConnectorConfig {
     SECRET,
     NODE_ENV,
     PORT = 8082,
-    OVERRIDE_FIREHOSE_URL
+    OVERRIDE_FIREHOSE_URL,
+    CLIENT_ID,
+    CLIENT_SECRET
   } = process.env;
 
+  if (!CLIENT_ID || !CLIENT_SECRET) {
+    throw new Error(
+      "Missing Client ID and/or Secret. Check your environment variables"
+    );
+  }
   const hostSecret = SECRET || "1234";
 
   return {
@@ -21,12 +28,15 @@ export default function connectorConfig(): HullConnectorConfig {
     hostSecret,
     devMode: NODE_ENV === "development",
     port: PORT || 8082,
-    handlers: handlers(),
+    handlers: handlers({ clientID: CLIENT_ID, clientSecret: CLIENT_SECRET }),
     middlewares: [fetchToken],
     cacheConfig: {
       store: "memory",
       ttl: 1
     },
+    httpClientConfig: {
+      prefix: "https://api.aircall.io/v1"
+    }
     logsConfig: {
       logLevel: LOG_LEVEL
     },

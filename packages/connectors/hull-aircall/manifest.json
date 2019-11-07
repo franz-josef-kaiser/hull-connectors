@@ -11,6 +11,32 @@
   "version": "0.1.8-monorepo",
   "private_settings": [
     {
+      "name": "oauth",
+      "title": "Oauth",
+      "type": "string",
+      "format": "oauth",
+      "description": "On the authentication screen, log into Aircal with your username and password, if you are not already logged in",
+      "handler": "oauth",
+      "url": "/auth",
+      "options": {
+        "tokenInUrl": true,
+        "name": "Aircall",
+        "strategy": {
+          "redirect_uri": "https://hull-aircall-staging.herokuapp.com/auth/callback",
+          "response_type": "code",
+          "scope": [
+            "public_api"
+          ]
+        }
+      }
+    },
+    {
+      "name": "access_token",
+      "title": "Access Token",
+      "type": "string",
+      "format": "hidden"
+    },
+    {
       "title": "Preferred email Label",
       "description": "Enter the label of the email you want to use as the main identifier (For instance 'Work' or 'Main'). If contact doesn't have it, we'll fetch the first email we find",
       "name": "preferred_email",
@@ -26,34 +52,20 @@
       "description": "Setup Aircall Webhook to capture events",
       "step": "credentials",
       "properties": [
-        "json.credentials"
+        "private_settings.oauth"
       ]
     },
     {
       "title": "Configuration",
-      "description": "Configure how we resolve identites and associate events to Users",
+      "description": "Please begin by authenticating this connector with Aircall. ",
       "properties": [
         "private_settings.preferred_email"
       ]
     }
   ],
-  "json": [
-    {
-      "url": "/url",
-      "name": "credentials",
-      "format": "credentials",
-      "title": "Webhook URL",
-      "description": "Copy this webhook and install it in [Aircall's dashboard](https://dashboard-v2.aircall.io/integrations) to setup your Webhook. Read this connector's Docs for detailed instructions",
-      "handler": "credentialsHandler"
-    }
-  ],
   "incoming": [
     {
       "url": "/webhooks/:connectorId/:token",
-      "handler": "incomingHandler"
-    },
-    {
-      "url": "/webhooks/:connectorId",
       "handler": "incomingHandler"
     }
   ],

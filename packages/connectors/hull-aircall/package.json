@@ -12,6 +12,7 @@
   "dependencies": {
     "domready": "^1.0.8",
     "mongoose": "5.4.16",
+    "passport-aircall": "^0.0.1",
     "syntax-error": "^1.4.0"
   },
   "devDependencies": {}
