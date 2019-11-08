@@ -20,8 +20,8 @@ const handler = async (
   const event: Event = message.body;
   const { data = {} } = event;
   const { id } = data;
-  if (event.event === "call.created") {
-    const contents = getInsightsCard(ctx, event);
+  if (event.resource === "call" && event.event === "call.created") {
+    const contents = await getInsightsCard(ctx, event);
     await authRequest(ctx)
       .post(`/calls/${id}/insight_cards`)
       .send({ contents });

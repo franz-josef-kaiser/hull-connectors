@@ -51,12 +51,13 @@ export const query = (
 const getTerms = (claims?: HullEntityClaims = {}): Array<Lookup | Condition> =>
   _.reduce(
     claims,
-    (filters, value, claim: string) => {
+    (filters, value: String | Array<String>, claim: string) => {
       if (!TERMS[claim]) {
         return filters;
       }
-      const tt = TERMS[claim].map(term => ({ term: { [term]: value } }));
-      console.log(tt);
+      const tt = TERMS[claim].map(term => ({
+        terms: { [term]: _.isArray(value) ? value : [value] }
+      }));
       filters.push(tt.length === 1 ? _.first(tt) : condition("should", tt));
       return filters;
     },

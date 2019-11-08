@@ -11,8 +11,8 @@ const statusHandler = async (
 ): HullSettingsResponse => {
   const { connector } = ctx;
   const { private_settings = {} } = connector;
-  const { access_token } = private_settings;
-
+  const { access_token, company_name } = private_settings;
+  debugger
   if (!access_token) {
     return {
       status: 400,
@@ -25,8 +25,8 @@ const statusHandler = async (
   return {
     status: 200,
     data: {
-      message: "",
-      html: ""
+      message: `Connected to team ${company_name}`,
+      html: `Connected to team <span>${company_name}</span>`
     }
   };
 };

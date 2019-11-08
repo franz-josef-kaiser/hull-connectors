@@ -9,6 +9,29 @@
   "ui": false,
   "readme": "readme.md",
   "version": "0.1.8-monorepo",
+  "mappings": [
+    {
+      "service": "contact",
+      "hull": "user",
+      "mappings": [
+        {
+          "service": "email",
+          "hull": "email",
+          "overwrite": "false"
+        },
+        {
+          "service": "first_name",
+          "hull": "first_name",
+          "overwrite": "false"
+        },
+        {
+          "service": "last_name",
+          "hull": "last_name",
+          "overwrite": "false"
+        }
+      ]
+    }
+  ],
   "private_settings": [
     {
       "name": "oauth",
@@ -19,16 +42,74 @@
       "handler": "oauth",
       "url": "/auth",
       "options": {
-        "tokenInUrl": true,
+        "tokenInUrl": false,
         "name": "Aircall",
         "strategy": {
-          "redirect_uri": "https://hull-aircall-staging.herokuapp.com/auth/callback",
           "response_type": "code",
           "scope": [
             "public_api"
           ]
         }
       }
+    },
+    {
+      "name": "incoming_contact_mapping",
+      "title": "Aircall Contact Mapping",
+      "description": "How we map Aircall Contacts to Hull Users",
+      "type": "array",
+      "format": "traitMapping",
+      "options": {
+        "direction": "incoming",
+        "showOverwriteToggle": true,
+        "allowCreate": true,
+        "placeholder": "Clearbit Person Field",
+        "loadOptions": "/schema/person_properties",
+        "source": "clearbit"
+      },
+      "default": [
+        {
+          "service": "id",
+          "hull": "traits_aircall/id",
+          "readOnly": true,
+          "overwrite": true
+        },
+        {
+          "service": "phone_numbers.value",
+          "hull": "traits_aircall/phone_numbers",
+          "readOnly": true,
+          "overwrite": true
+        },
+        {
+          "service": "emails.value",
+          "hull": "traits_aircall/emails",
+          "readOnly": true,
+          "overwrite": true
+        },
+        {
+          "service": "first_name",
+          "hull": "traits_aircall/first_name",
+          "readOnly": false,
+          "overwrite": true
+        },
+        {
+          "service": "last_name",
+          "hull": "traits_aircall/last_name",
+          "readOnly": false,
+          "overwrite": true
+        },
+        {
+          "service": "information",
+          "hull": "traits_aircall/information",
+          "readOnly": false,
+          "overwrite": true
+        },
+        {
+          "service": "company_name",
+          "hull": "traits_aircall/company_name",
+          "readOnly": false,
+          "overwrite": true
+        }
+      ]
     },
     {
       "name": "access_token",
@@ -38,10 +119,21 @@
     },
     {
       "title": "Preferred email Label",
-      "description": "Enter the label of the email you want to use as the main identifier (For instance 'Work' or 'Main'). If contact doesn't have it, we'll fetch the first email we find",
+      "description": "Enter the label of the email you want to use as the main identifier (For instance 'Work' or 'Main'). If contact doesn't have it, will fallback the first email found",
       "name": "preferred_email",
       "format": "string",
-      "type": "string"
+      "required": true,
+      "type": "string",
+      "default": "Work"
+    },
+    {
+      "title": "Preferred phone Label",
+      "description": "Enter the label of the phone you want to use as the main identifier (For instance 'Work' or 'Main'). If contact doesn't have it, will fallback the first phone found",
+      "name": "preferred_phone",
+      "format": "string",
+      "required": true,
+      "type": "string",
+      "default": "Work"
     }
   ],
   "resources": [],
@@ -59,7 +151,8 @@
       "title": "Configuration",
       "description": "Please begin by authenticating this connector with Aircall. ",
       "properties": [
-        "private_settings.preferred_email"
+        "private_settings.preferred_email",
+        "private_settings.preferred_phone"
       ]
     }
   ],

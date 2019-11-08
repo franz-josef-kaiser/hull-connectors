@@ -17,11 +17,11 @@ export default async function statusCheck(
     };
   }
   const response = await authRequest(ctx).get("/ping");
-  if (!response || !response.ping) {
+  if (!response.body || !response.body.ping) {
     return {
       messages: [
         "Something went wrong when pinging the Aircall API",
-        response.toJson()
+        response.error || response.body
       ],
       status: "error"
     };

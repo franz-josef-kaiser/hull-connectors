@@ -29,7 +29,7 @@ export type EventType =
 export type Source = "teammate" | "rule";
 export type Resource = "number" | "user" | "contact" | "call";
 
-export type User = {
+export type User = {|
   id: number,
   direct_link: string,
   name: string,
@@ -38,14 +38,14 @@ export type User = {
   // eslint-disable-next-line no-use-before-define
   numbers: Array<Number>,
   created_at: string
-};
+|};
 
-export type Tag = {
+export type Tag = {|
   name: string,
   tagged_by: User,
   tagged_at: number
-};
-export type Number = {
+|};
+export type Number = {|
   id: number,
   direct_link: string,
   name: string,
@@ -57,26 +57,26 @@ export type Number = {
   live_recording_activated: true,
   users: Array<User>,
   created_at: string
-};
-export type Comment = {
+|};
+export type Comment = {|
   id: number,
   content: string,
   posted_by: User,
   posted_at: number
-};
+|};
 
-export type Email = {
+export type Email = {|
   id?: number,
   label: string,
   value: string
-};
-export type PhoneNumber = {
+|};
+export type PhoneNumber = {|
   id?: number,
   label: string,
   value: string
-};
+|};
 
-export type Contact = {
+export type Contact = {|
   id: number,
   direct_link: string,
   first_name: string,
@@ -86,9 +86,9 @@ export type Contact = {
   is_shared: string,
   phone_numbers: Array<PhoneNumber>,
   emails: Array<Email>
-};
+|};
 
-export type Call = {
+export type Call = {|
   id: number,
   direct_link: string,
   status: "initial" | "answered" | "done",
@@ -114,35 +114,35 @@ export type Call = {
   contact: Contact,
   comments: Array<Comment>,
   tags: Array<Tag>
-};
+|};
 
-export type CallEvent = {
+export type CallEvent = {|
   resource: "call",
   event: EventType,
   timestamp: number,
   token: string,
   data: Call
-};
-export type ContactEvent = {
+|};
+export type ContactEvent = {|
   resource: "contact",
   event: EventType,
   timestamp: number,
   token: string,
   data: Contact
-};
-export type NumberEvent = {
+|};
+export type NumberEvent = {|
   resource: "number",
   event: EventType,
   timestamp: number,
   token: string,
   data: Number
-};
-export type UserEvent = {
+|};
+export type UserEvent = {|
   resource: "user",
   event: EventType,
   timestamp: number,
   token: string,
   data: User
-};
+|};
 
 export type Event = CallEvent | ContactEvent | NumberEvent | UserEvent;

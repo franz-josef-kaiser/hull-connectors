@@ -1,29 +1,41 @@
 // @flow
 import type { HullContext } from "hull";
-import type { CallEvent } from "../types";
+import type { CallEvent, PhoneNumber, Email } from "../types";
 
-export default function(ctx: HullContext, event: CallEvent) {
+const getValues = (
+  items: Array<PhoneNumber | Email>,
+  prefix?: string
+): Array<string> => items.map(i => `${prefix || ""}${i.value}`);
+
+export default async function(ctx: HullContext, event: CallEvent) {
+  const { clientCredentials } = ctx;
+  const { organization } = clientCredentials;
   const { data } = event;
-  const { contact, phone_numbers, emails, id } = data;
-  const payload = ctx.entity.users.get({
+  const { contact } = data;
+  const { phone_numbers, emails, id } = contact;
+  const payload = await ctx.entities.users.get({
     claims: {
-      anonymous_id: [...phone_numbers.map(p => `phone:${p}`), `aircall:${id}`],
-      email: emails.map(e => e.value)
+      anonymous_id: [`aircall:${id}`, ...getValues(phone_numbers, "phone:")],
+      email: getValues(emails)
     }
   });
+  const { user } = payload.data[0];
 
+  const prfix = `https://dashboard.hullapp.io/${organization.split(".")[0]}`;
   // Aircall Contact ID.
   return [
-    {
-      type: "title",
-      text: "Last support ticket",
-      link: "https://my-custom-crm.com/12345"
-    },
-    {
-      type: "shortText",
-      text: "John Doe",
-      label: "Account owner",
-      link: "https://my-custom-crm.com/6789"
-    }
+    [
+      {
+        type: "title",
+        text: `${user.name || user.email}`,
+        link: `${prfix}/users/${user.id}`
+      },
+      {
+        type: "shortText",
+        label: "View in Hull",
+        text: "Open user profile",
+        link: `${prfix}/users/${user.id}`
+      }
+    ]
   ];
 }

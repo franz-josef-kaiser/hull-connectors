@@ -36,7 +36,7 @@ export default function connectorConfig(): HullConnectorConfig {
     },
     httpClientConfig: {
       prefix: "https://api.aircall.io/v1"
-    }
+    },
     logsConfig: {
       logLevel: LOG_LEVEL
     },

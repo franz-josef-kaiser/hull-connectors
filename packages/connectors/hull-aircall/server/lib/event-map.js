@@ -177,23 +177,29 @@ const getContact = (resource, event) => {
   return undefined;
 };
 
-export const getClaims = (preferred_email: string) => (
+const getFirst = (list, preferred) =>
+  (_.find(list, e => e.label === preferred) || _.first(list) || {}).value;
+
+export const getClaims = (preferred_email: string, preferred_phone: string) => (
   event: Event
-): void | HullUserClaims => {
+): void | {
+  claims: HullUserClaims,
+  aliases: Array<string>
+} => {
   const { resource } = event;
   // $FlowFixMe
   const contact: void | Contact = getContact(resource, event);
   if (!contact) {
     return undefined;
   }
-  const { emails, id } = contact;
-  const email = (
-    _.find(emails, e => e.label === preferred_email) ||
-    _.first(emails) ||
-    {}
-  ).value;
+  const { phone_numbers, emails, id } = contact;
+  const email = getFirst(emails, preferred_email);
+  const phone = getFirst(phone_numbers, preferred_phone);
   if (email) {
-    return { anonymous_id: `aircall-${id}`, email };
+    return {
+      claims: { anonymous_id: `aircall:${id}`, email },
+      aliases: phone ? [`phone:${phone}`] : []
+    };
   }
   return undefined;
 };

@@ -38,8 +38,16 @@ export type HullIncludedEntities = {
   users?: boolean
 };
 
+type StringOrArray = string | Array<string>;
+
 export type HullGetEntityParams = {
-  claims?: HullEntityClaims,
+  claims?: {
+    email?: StringOrArray,
+    domain?: StringOrArray,
+    external_id?: StringOrArray,
+    anonymous_id?: StringOrArray,
+    id?: StringOrArray
+  },
   search?: string,
   entity: HullEntityName,
   include?: HullIncludedEntities,
@@ -47,14 +55,14 @@ export type HullGetEntityParams = {
   page?: number
 };
 
-export type HullGetEntityResponse<Entity> = {
+export type HullGetEntityResponse<Entity> = {|
   pagination: {
     pages: number,
     per_page: number,
     page: number
   },
   data: Array<Entity>
-};
+|};
 
 export type HullFetchedEvent = HullEvent;
 export type HullGetUserResponse = HullGetEntityResponse<HullFetchedUser>;
