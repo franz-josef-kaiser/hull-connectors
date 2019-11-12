@@ -7,7 +7,7 @@ import type {
 } from "hull";
 import _ from "lodash";
 import type { Entry } from "hull-vm";
-import { compute, serialize } from "hull-vm";
+import { compute, serialize, varsFromSettings } from "hull-vm";
 import getSample from "../lib/get-sample";
 import getClaims from "../lib/get-claims";
 
@@ -60,20 +60,22 @@ export default async function getEntity(
       };
     }
     const { group } = ctx.client.utils.traits;
-    const { user, account, events = [] } = rawPayload;
-    const payload = isUser
-      ? {
-          ...rawPayload,
-          user: group(user),
-          account: group(account),
-          changes: getSample(user),
-          events: (events || []).filter(isVisible)
-        }
-      : {
-          ...rawPayload,
-          account: group(account),
-          changes: getSample(account)
-        };
+    const { user, account = {}, events = [] } = rawPayload;
+    const userPayload =
+      events && user && isUser
+        ? {
+            user: group(user),
+            changes: getSample(user),
+            events: events.filter(isVisible)
+          }
+        : {};
+    const payload = {
+      ...rawPayload,
+      variables: varsFromSettings(ctx),
+      account: group(account),
+      changes: getSample(account),
+      ...userPayload
+    };
 
     const result = await compute(ctx, {
       source: "processor",
