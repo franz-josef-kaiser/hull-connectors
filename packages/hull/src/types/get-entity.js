@@ -6,8 +6,7 @@ import type {
   HullEvent,
   HullUserSegment,
   HullAccountSegment,
-  HullEntityName,
-  HullEntityClaims
+  HullEntityName
 } from "./index";
 
 export type HullFetchedUser = {

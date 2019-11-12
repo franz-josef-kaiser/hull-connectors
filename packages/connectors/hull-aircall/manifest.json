@@ -38,7 +38,7 @@
       "title": "Oauth",
       "type": "string",
       "format": "oauth",
-      "description": "On the authentication screen, log into Aircal with your username and password, if you are not already logged in",
+      "description": "On the authentication screen, log into Aircall with your username and password, if you are not already logged in",
       "handler": "oauth",
       "url": "/auth",
       "options": {
@@ -148,7 +148,7 @@
     },
     {
       "title": "Configuration",
-      "description": "Please begin by authenticating this connector with Aircall. ",
+      "description": "Please begin by authenticating this connector with Aircall. Once you are successfully authenticated, go to your Aircall dashboard, click Integrations and pick some numbers to connect to Hull",
       "properties": [
         "private_settings.preferred_email",
         "private_settings.preferred_phone"

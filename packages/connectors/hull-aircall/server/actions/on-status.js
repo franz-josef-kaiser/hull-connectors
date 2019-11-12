@@ -12,7 +12,6 @@ const statusHandler = async (
   const { connector } = ctx;
   const { private_settings = {} } = connector;
   const { access_token, company_name } = private_settings;
-  debugger
   if (!access_token) {
     return {
       status: 400,
