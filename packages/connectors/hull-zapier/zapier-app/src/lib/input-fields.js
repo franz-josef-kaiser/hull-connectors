@@ -37,7 +37,6 @@ function segments(entityType, { list } = {}) {
         key: `${entityType}_segments`,
         required: true,
         label: `${_.startCase(entityType)} Segment`,
-        default: allSegmentsOption,
         list,
         choices: _.concat(allSegmentsOption, segment_choices)
       }

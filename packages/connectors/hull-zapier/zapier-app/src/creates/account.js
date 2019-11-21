@@ -1,10 +1,16 @@
-import _ from "lodash";
-import sample from "../../samples/account.json";
-import { createUrl } from "../config";
-import { post } from "../lib/request";
+const _ = require("lodash");
+const sample = require("../../samples/account.json");
+const { createUrl } = require("../config");
+const { post } = require("../lib/request");
+const { isValidClaim } = require("../lib/utils");
 
 const perform = async (z, { inputData }) => {
   const { external_id, domain, attributes } = inputData;
+
+  if (!isValidClaim({ external_id, domain })) {
+    return Promise.resolve({ error: "invalid claims" });
+  }
+
   const claims = _.pickBy({ domain, external_id }, (v, _k) => !_.isEmpty(v));
   return post(z, {
     url: createUrl,

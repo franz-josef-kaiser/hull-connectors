@@ -12,26 +12,39 @@
       "send_all_account_attributes": true,
       "outgoing_account_attributes": [],
       "synchronized_user_segments": [
-        "user_segment_1",
-        "user_segment_2",
-        "user_segment_3"
+        "ALL"
       ],
-      "synchronized_account_segments": [],
+      "synchronized_account_segments": [
+        "ALL"
+      ],
       "subscriptions": [
         {
           "url": "https://hooks.zapier.com/hooks/standard/5687326/user-attribute-updated/1",
           "action": "attribute_updated",
-          "entityType": "user"
+          "entityType": "user",
+          "inputData": {
+            "user_attributes": [ "pipedrive/department", "pipedrive/description" ],
+            "account_attributes": [ "pipedrive/industry" ],
+            "account_segments": [ "account_segment_id_1", "all_account_segments" ],
+            "user_segments": [ "user_segment_1" ]
+          }
         },
         {
           "url": "https://hooks.zapier.com/hooks/standard/5687326/account-attribute-updated/1",
           "action": "attribute_updated",
-          "entityType": "account"
+          "entityType": "account",
+          "inputData": {
+            "account_attributes": [ "pipedrive/industry" ],
+            "account_segments": [ "account_segment_id_1", "all_account_segments" ]
+          }
         },
         {
           "url": "https://hooks.zapier.com/hooks/standard/5687326/user-entered-segment/1",
           "action": "entered_segment",
-          "entityType": "user"
+          "entityType": "user",
+          "inputData": {
+            "user_segments": [ "user_segment_1", "user_segment_2" ]
+          }
         }
       ]
     },

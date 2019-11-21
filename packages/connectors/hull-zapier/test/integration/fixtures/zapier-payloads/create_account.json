@@ -24,14 +24,12 @@
     "x-forwarded-for": "54.90.209.51"
   },
   "body": {
-    "entityType": "user",
-    "attributes": [
-      {
-        "pipedrive/department": "marketing",
-        "name": "Andy Hull",
-        "pipedrive/id": "pipedrive_id"
-      }
-    ],
+    "entityType": "account",
+    "attributes": {
+      "pipedrive/department": "marketing",
+      "name": "Andy Hull",
+      "pipedrive/id": "pipedrive_id"
+    },
     "claims": {
       "external_id": "test_external_id",
       "domain": "google.com"

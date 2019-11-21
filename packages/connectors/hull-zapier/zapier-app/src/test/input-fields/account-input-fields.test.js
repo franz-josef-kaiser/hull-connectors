@@ -41,10 +41,6 @@ describe('Input Fields Test', () => {
       "key": "account_segments",
       "required": true,
       "label": "Account Segment",
-      "default": {
-        "value": "all_account_segments",
-        "label": "All Account Segments"
-      },
       "list": true,
       "choices": [
         {
@@ -91,10 +87,6 @@ describe('Input Fields Test', () => {
       "key": "account_segments",
       "required": true,
       "label": "Account Segment",
-      "default": {
-        "value": "all_account_segments",
-        "label": "All Account Segments"
-      },
       "list": true,
       "choices": [
         {
@@ -141,10 +133,6 @@ describe('Input Fields Test', () => {
       "key": "account_segments",
       "required": true,
       "label": "Account Segment",
-      "default": {
-        "value": "all_account_segments",
-        "label": "All Account Segments"
-      },
       "list": true,
       "choices": [
         {
@@ -201,10 +189,6 @@ describe('Input Fields Test', () => {
           "key": "account_segments",
           "required": true,
           "label": "Account Segment",
-          "default": {
-            "value": "all_account_segments",
-            "label": "All Account Segments"
-          },
           "list": true,
           "choices": [
             {

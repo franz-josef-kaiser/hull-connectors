@@ -23,6 +23,9 @@
   "body": {
     "url": "https://hooks.zapier.com/hooks/standard/5687326/8bc34320f3554eb0ae3713c03733c818/",
     "action": "entered_segment",
-    "entityType": "user"
+    "entityType": "user",
+    "inputData": {
+      "user_segments": [ "5ccc40117dd61d9b680099e0", "5cc98a004c5202e276001ac0" ]
+    }
   }
 }

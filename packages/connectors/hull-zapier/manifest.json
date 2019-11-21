@@ -17,7 +17,6 @@
       "name": "subscriptions",
       "title": "Rest Hook Subscriptions",
       "type": "array",
-      "format": "hidden",
       "items": {
         "type": "object",
         "properties": {
@@ -87,14 +86,6 @@
       "step": "credentials",
       "properties": [
         "json.credentials"
-      ]
-    },
-    {
-      "title": "Configuration",
-      "description": "Configure what Hull will send to the Zapier connector - this happens before the Zapier connector receives data: If a user, account or event is filtered here, Zapier won't receive it at all, even if it has no filters set on it's side",
-      "properties": [
-        "private_settings.synchronized_user_segments",
-        "private_settings.synchronized_account_segments"
       ]
     }
   ],

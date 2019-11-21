@@ -25,7 +25,8 @@ it("Receive New Subscription", () => {
             {
               "url": "https://hooks.zapier.com/hooks/standard/1/1/",
               "action": "entered_segment",
-              "entityType": "user"
+              "entityType": "user",
+              "inputData": {}
             }
           );
       },
@@ -47,7 +48,8 @@ it("Receive New Subscription", () => {
               {
                 "url": "https://hooks.zapier.com/hooks/standard/1/1/",
                 "action": "entered_segment",
-                "entityType": "user"
+                "entityType": "user",
+                "inputData": {}
               }
             ]
           },
@@ -69,7 +71,8 @@ it("Receive New Subscription And Merge With Existing Subscriptions", () => {
             {
               "url": "https://hooks.zapier.com/hooks/standard/1/1/",
               "action": "entered_segment",
-              "entityType": "user"
+              "entityType": "user",
+              "inputData": {}
             }
           ]
         }
@@ -83,7 +86,8 @@ it("Receive New Subscription And Merge With Existing Subscriptions", () => {
             {
               "url": "https://hooks.zapier.com/hooks/standard/1/2/",
               "action": "entered_segment",
-              "entityType": "user"
+              "entityType": "user",
+              "inputData": {}
             }
           );
       },
@@ -105,12 +109,14 @@ it("Receive New Subscription And Merge With Existing Subscriptions", () => {
               {
                 "url": "https://hooks.zapier.com/hooks/standard/1/1/",
                 "action": "entered_segment",
-                "entityType": "user"
+                "entityType": "user",
+                "inputData": {}
               },
               {
                 "url": "https://hooks.zapier.com/hooks/standard/1/2/",
                 "action": "entered_segment",
-                "entityType": "user"
+                "entityType": "user",
+                "inputData": {}
               }
             ]
           },
@@ -131,7 +137,8 @@ it("Receive New Subscription And Unable To Merge With Existing Subscriptions", (
             {
               "url": "https://hooks.zapier.com/hooks/standard/1/1/",
               "action": "entered_segment",
-              "entityType": "user"
+              "entityType": "user",
+              "inputData": {}
             }
           ]
         }
@@ -145,7 +152,8 @@ it("Receive New Subscription And Unable To Merge With Existing Subscriptions", (
             {
               "url": "https://hooks.zapier.com/hooks/standard/1/1/",
               "action": "entered_segment",
-              "entityType": "user"
+              "entityType": "user",
+              "inputData": {}
             }
           );
       },

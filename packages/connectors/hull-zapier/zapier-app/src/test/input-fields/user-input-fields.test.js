@@ -24,8 +24,6 @@ describe('Input Fields Test', () => {
       }
     };
 
-    console.log(`connector url: ${connector_url}`);
-
     nock(connector_url)
       .post("/segments?token=YOUR_TOKEN", { "entityType": "user" })
       .reply(200, [
@@ -43,10 +41,6 @@ describe('Input Fields Test', () => {
       "key": "user_segments",
       "required": true,
       "label": "User Segment",
-      "default": {
-        "value": "all_user_segments",
-        "label": "All User Segments"
-      },
       "list": true,
       "choices": [
         {
@@ -94,10 +88,6 @@ describe('Input Fields Test', () => {
       "key": "user_segments",
       "required": true,
       "label": "User Segment",
-      "default": {
-        "value": "all_user_segments",
-        "label": "All User Segments"
-      },
       "list": true,
       "choices": [
         {
@@ -145,10 +135,6 @@ describe('Input Fields Test', () => {
       "key": "user_segments",
       "required": true,
       "label": "User Segment",
-      "default": {
-        "value": "all_user_segments",
-        "label": "All User Segments"
-      },
       "list": true,
       "choices": [
         {
@@ -222,10 +208,6 @@ describe('Input Fields Test', () => {
           "key": "user_segments",
           "required": true,
           "label": "User Segment",
-          "default": {
-            "value": "all_user_segments",
-            "label": "All User Segments"
-          },
           "list": true,
           "choices": [
             {
@@ -270,10 +252,6 @@ describe('Input Fields Test', () => {
           "key": "account_segments",
           "required": true,
           "label": "Account Segment",
-          "default": {
-            "value": "all_account_segments",
-            "label": "All Account Segments"
-          },
           "list": true,
           "choices": [
             {
@@ -372,10 +350,6 @@ describe('Input Fields Test', () => {
         "key": "user_segments",
         "required": true,
         "label": "User Segment",
-        "default": {
-          "value": "all_user_segments",
-          "label": "All User Segments"
-        },
         "list": true,
         "choices": [
           {
@@ -396,10 +370,6 @@ describe('Input Fields Test', () => {
         "key": "account_segments",
         "required": true,
         "label": "Account Segment",
-        "default": {
-          "value": "all_account_segments",
-          "label": "All Account Segments"
-        },
         "list": true,
         "choices": [
           {

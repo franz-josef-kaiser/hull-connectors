@@ -8,7 +8,7 @@ import connectorConfig from "../../server/config";
 
 describe("Outgoing User Event Tests", () => {
 
-  it("Send Single User Event To Zapier with 'ALL' whitlisted events", () => {
+  it("Send Single User Event To Zapier", () => {
     return testScenario({ connectorConfig }, ({ handlers, nock, expect }) => {
       const updateMessages = _.cloneDeep(require("./fixtures/notifier-payloads/update-single-user"));
       const private_settings = {
@@ -17,7 +17,12 @@ describe("Outgoing User Event Tests", () => {
           {
             "url": "https://hooks.zapier.com/hooks/standard/5687326/user-event-created/1",
             "action": "created",
-            "entityType": "user_event"
+            "entityType": "user_event",
+            "inputData": {
+              "account_segments": [ 'all_account_segments' ],
+              "user_segments": [ 'user_segment_1' ],
+              "user_event": [ 'Email Opened' ]
+            }
           }
         ]
       };
@@ -106,7 +111,7 @@ describe("Outgoing User Event Tests", () => {
     });
   });
 
-  it("Send Single User Event To Zapier With Specific Event", () => {
+  it("User event not in whitelist. Should not send Single User Event To Zapier", () => {
     return testScenario({ connectorConfig }, ({ handlers, nock, expect }) => {
       const updateMessages = _.cloneDeep(require("./fixtures/notifier-payloads/update-single-user"));
       const private_settings = {
@@ -115,7 +120,12 @@ describe("Outgoing User Event Tests", () => {
           {
             "url": "https://hooks.zapier.com/hooks/standard/5687326/user-event-created/1",
             "action": "created",
-            "entityType": "user_event"
+            "entityType": "user_event",
+            "inputData": {
+              "account_segments": [ 'all_account_segments' ],
+              "user_segments": [ 'user_segment_1' ],
+              "user_event": [ 'Email Sent' ]
+            }
           }
         ]
       };
@@ -171,34 +181,14 @@ describe("Outgoing User Event Tests", () => {
         handlerType: handlers.notificationHandler,
         handlerUrl: "smart-notifier",
         channel: "user:update",
-        externalApiMock: () => {
-          const scope = nock("https://hooks.zapier.com/hooks/standard/5687326");
-
-          scope
-            .post("/user-event-created/1")
-            .reply(200, {
-              "status": "success",
-              "attempt": "1",
-              "id": "1",
-              "request_id": "1"
-            });
-
-          return scope;
-        },
+        externalApiMock: () => {},
         response: { flow_control: { type: "next", in: 5, in_time: 10, size: 10, } },
         logs: [
           ["info", "outgoing.job.start", { "request_id": expect.whatever() }, { "jobName": "Outgoing Data", "type": "user" }],
-          ["debug", "connector.service_api.call", { "request_id": expect.whatever() },
-            expect.objectContaining({"url": "https://hooks.zapier.com/hooks/standard/5687326/user-event-created/1", "method": "POST"})
-          ],
-          ["info", "outgoing.user.success",
-            expect.objectContaining({ "subject_type": "user", "user_email": "bob@bobby.com" }),
-            expect.objectContaining({ "data": expect.objectContaining({"message_id": "message_1"}), "type": "User", "operation": "post" })
-          ],
           ["info", "outgoing.job.success", { "request_id": expect.whatever() }, { "jobName": "Outgoing Data", "type": "user" }]
         ],
         firehoseEvents:[],
-        metrics: [["increment", "connector.request", 1,], ["increment", "ship.service_api.call", 1,], ["value", "connector.service_api.response_time", expect.whatever()]],
+        metrics: [["increment", "connector.request", 1,]],
         platformApiCalls: []
       });
     });

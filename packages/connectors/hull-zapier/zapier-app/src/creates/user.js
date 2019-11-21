@@ -2,9 +2,15 @@ const _ = require("lodash");
 const sample = require("../../samples/user");
 const { createUrl } = require("../config");
 const { post } = require("../lib/request");
+const { isValidClaim } = require("../lib/utils");
 
 const perform = async (z, { inputData }) => {
   const { external_id, email, attributes } = inputData;
+
+  if (!isValidClaim({ external_id, email })) {
+    return Promise.resolve({ error: "invalid claims" });
+  }
+
   const claims = _.pickBy({ email, external_id }, (v, _k) => !_.isEmpty(v));
   return post(z, {
     url: createUrl,

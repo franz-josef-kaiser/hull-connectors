@@ -1,14 +1,27 @@
-import sample from "../../samples/user.json";
-import { schemaUrl, searchUrl } from "../config";
-import { post } from "../lib/request";
+const _ = require("lodash");
+const sample = require("../../samples/user.json");
+const { schemaUrl, searchUrl } = require("../config");
+const { post } = require("../lib/request");
+const { isValidClaim } = require("../lib/utils");
 
 const perform = async (z, { inputData }) => {
   const { email, external_id } = inputData;
   const claims = { email, external_id };
-  return post(z,{
+
+  if (!isValidClaim({ external_id, email })) {
+    return Promise.resolve([{ error: "invalid claims" }]);
+  }
+
+  const res = await post(z,{
     url: searchUrl,
     body: { claims, entityType: "user" }
   });
+
+  if (_.get(res, "error", false)) {
+    return Promise.resolve([{ error: `User with claims ${JSON.stringify(claims)} not found.`}]);
+  }
+
+  return res;
 };
 
 const schema = async z =>
@@ -24,17 +37,17 @@ const user = {
   operation: {
     inputFields: [
       {
+        key: "external_id",
+        type: "string",
+        label: "External ID",
+        helpText: "External ID of the user to look up"
+      },
+      {
         key: "email",
         type: "string",
         label: "Email",
         helpText:
           "Email of the User to lookup. If we find multiple emails, we will use the oldest entry"
-      },
-      {
-        key: "external_id",
-        type: "string",
-        label: "External ID",
-        helpText: "External ID of the user to look up"
       }
     ],
     perform,
