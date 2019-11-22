@@ -166,13 +166,13 @@ class HullSdk {
 
   getUser(claims: any) {
     return this.entities.users.get({ claims }).then((response) => {
-      return response;
+      return _.get(response, "data[0]", []);
     });
   }
 
   getAccount(claims: any) {
     return this.entities.accounts.get({ claims }).then((response) => {
-      return response;
+      return _.get(response, "data[0]", []);
     });
   }
 
