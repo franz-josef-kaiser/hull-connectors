@@ -867,6 +867,86 @@ describe("Outgoing Users Tests", () => {
     });
   });
 
+  it("There are no user or account whitelisted attributes, but all other validations pass. Should not send to zapier.", () => {
+    return testScenario({ connectorConfig }, ({ handlers, nock, expect }) => {
+      const updateMessages = _.cloneDeep(require("./fixtures/notifier-payloads/update-single-user"));
+      const private_settings = {
+        ...updateMessages.connector.private_settings,
+        subscriptions: [
+          {
+            "url": "https://hooks.zapier.com/hooks/standard/5687326/user-attribute-updated/1",
+            "action": "attribute_updated",
+            "entityType": "user",
+            "inputData": {
+              "user_attributes": [],
+              "account_attributes": [],
+              "account_segments": [ "all_account_segments" ],
+              "user_segments": [ "user_segment_1", "user_segment_2" ]
+            }
+          }
+        ]
+      };
+      const message1 =
+        {
+          "changes": {
+            "is_new": false,
+            "account":  {
+              "pipedrive/industry": ["it", "IT"],
+              "blacklistattr_1": ["", "1"],
+              "blacklistattr_2": ["", "1"],
+              "blacklistattr_3": ["", "1"]
+            },
+            "user": {
+              "blacklistattr_1": ["", "1"],
+              "blacklistattr_2": ["", "1"],
+              "blacklistattr_3": ["", "1"]
+            },
+            "account_segments": {},
+            "segments": {}
+          },
+          "account": {
+            "id": "145245141",
+            "domain": "bobby.com",
+            "pipedrive/industry": "IT",
+          },
+          "user": {
+            "id": "5bd329d5e2bcf3eeaf000099",
+            "name": "Bob Bobby",
+            "email": "bob@bobby.com",
+          },
+          "account_segments": [],
+          "segments": [
+            {
+              "id": "user_segment_1",
+              "name": "UserSegment1",
+              "type": "users_segment",
+            }
+          ],
+          "message_id": "message_1"
+        };
+
+      _.set(updateMessages, "messages", [
+        message1
+      ]);
+      _.set(updateMessages.connector, "private_settings", private_settings);
+      return _.assign(updateMessages, {
+        handlerType: handlers.notificationHandler,
+        handlerUrl: "smart-notifier",
+        channel: "user:update",
+        externalApiMock: () => {},
+        response: { flow_control: { type: "next", in: 5, in_time: 10, size: 10, } },
+        logs: [
+          ["info", "outgoing.job.start", { "request_id": expect.whatever() }, { "jobName": "Outgoing Data", "type": "user" }],
+          ["info", "outgoing.job.success", { "request_id": expect.whatever() }, { "jobName": "Outgoing Data", "type": "user" }]
+        ],
+        firehoseEvents:[],
+        metrics: [
+          ["increment", "connector.request", 1,],
+        ],
+        platformApiCalls: []
+      });
+    });
+  });
   /*it("Webhook Not Valid - Should Unsubscribe", () => {
     return testScenario({ connectorConfig }, ({ handlers, nock, expect }) => {
 

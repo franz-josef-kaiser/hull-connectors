@@ -74,131 +74,121 @@ const glue = {
       user_left_segment: [ "user_segments" ],
       user_created: [ "user_segments" ],
       user_event_created: [ "user_segments", "account_segments", "user_event" ],
-      user_attribute_updated: [ "user_segments", "account_segments", ("user_attributes AND/OR account_attributes") ],
+      user_attribute_updated: [ "user_segments", "account_segments", ("'user_attributes' AND/OR 'account_attributes'") ],
     }
      */
   ],
-  isValidZap: returnValue([
-    set("isValid", true),
-    iterateL("${validations}", "validation", [
-
-      /*
-      Trigger Validations:
-          1) User Enters Segment
-              -> User enters one or more of the whitelisted user segments
-          2) User Leaves Segment
-              -> User leaves one or more of the whitelisted user segments
-          3) User Attribute Updated
-              -> CONDITION 1:
-                  -> User is IN one or more of the whitelisted user segments
-                     AND
-                  -> Account on the user is IN one or more of the whitelisted account segments
-              -> AND CONDITION 2:
-                  -> A whitelisted user attribute was updated
-                     OR
-                  -> A whitelisted account (on the user) attribute was updated
-          4) User Event Created
-              -> User is IN one or more of the whitelisted user segments
-                 AND
-              -> Event name matches an event on the user
-          5) Account Enters Segment
-              -> User enters one or more of the whitelisted account segments
-          6) Account Leaves Segment
-              -> User leaves one or more of the whitelisted user segments
-          7) Account Attribute Update
-              -> Account is IN one or more of the whitelisted user segments
-                 AND
-              -> A whitelisted account attribute was updated
-          8) User is created
-              -> A newly created user is IN one or more of the whitelisted user segments
-          9) Account is created
-              -> A newly created account is IN one or more of the whitelisted account segments
-       */
-
-      // Event Validation
-      ifL(cond("isEqual", "${validation}", "user_event"), [
-        ifL(cond("isEqual", 0, ld("size", ld("intersection", "${zapUserEvents}", "${userEvents}"))), [
-          set("failureReason", "Does not match user event"),
-          set("isValid", false),
-        ])
-      ]),
-
-      // User Segment Validations
-      ifL(cond("isEqual", "${validation}", "user_segments"), [
-        ifL(not(cond("isEqual", "${zapAction}", "left_segment")), [
-          ifL(cond("isEqual", 0, ld("size", ld("intersection", "${zapUserSegments}", "${userSegmentsIn}"))), [
-            set("failureReason", "Does not match user segments"),
-            set("isValid", false),
-          ])
-        ]),
-        ifL(cond("isEqual", "${zapAction}", "entered_segment"), [
-          ifL(cond("isEqual", 0, ld("size", ld("intersection", "${zapUserSegments}", "${userSegmentsEntered}"))), [
-            set("failureReason", "Does not match user entered segments"),
-            set("isValid", false),
-          ])
-        ]),
-        ifL(cond("isEqual", "${zapAction}", "left_segment"), [
-          ifL(cond("isEqual", 0, ld("size", ld("intersection", "${zapUserSegments}", "${userSegmentsLeft}"))), [
-            set("failureReason", "Does not match user left segments"),
-            set("isValid", false),
-          ])
-        ])
-      ]),
-
-      // Account Segment Validations
-      ifL(cond("isEqual", "${validation}", "account_segments"), [
-        ifL(not(cond("isEqual", "${zapAction}", "left_segment")), [
-          ifL(cond("isEqual", 0, ld("size", ld("intersection", "${zapAccountSegments}", "${accountSegmentsIn}"))), [
-            set("failureReason", "Does not match account segments"),
-            set("isValid", false),
-          ])
-        ]),
-        ifL(cond("isEqual", "${zapAction}", "entered_segment"), [
-          ifL(cond("isEqual", 0, ld("size", ld("intersection", "${zapAccountSegments}", "${accountSegmentsEntered}"))), [
-            set("failureReason", "Does not match account entered segments"),
-            set("isValid", false),
-          ])
-        ]),
-        ifL(cond("isEqual", "${zapAction}", "left_segment"), [
-          ifL(cond("isEqual", 0, ld("size", ld("intersection", "${zapAccountSegments}", "${accountSegmentsLeft}"))), [
-            set("failureReason", "Does not match account left segments"),
-            set("isValid", false),
-          ])
-        ])
-      ]),
-
-      // User/Account Attribute Validations
-      ifL(or([cond("isEqual", "${validation}", "user_attributes"), cond("isEqual", "${validation}", "account_attributes")]), [
-        set("hasMatchingUserAttributeChange", cond("lessThan", 0, ld("size", ld("intersection", "${zapUserAttributes}", "${userChangedAttributes}")))),
-        set("hasMatchingAccountAttributeChange", cond("lessThan", 0, ld("size", ld("intersection", "${zapAccountAttributes}", "${accountChangedAttributes}")))),
-
-        ifL([not("${hasMatchingUserAttributeChange}"), not("${hasMatchingAccountAttributeChange}")], [
-          set("failureReason", "Does not match user and/or account attributes"),
-          set("isValid", false),
-        ])
+  isValidSegment: [
+    ifL(not(cond("isEqual", "${zapAction}", "left_segment")), [
+      ifL(cond("isEqual", 0, ld("size", ld("intersection", "${validationData}", "${segmentsIn}"))), [
+        set("isValid", false),
       ])
     ]),
+    ifL(cond("isEqual", "${zapAction}", "entered_segment"), [
+      ifL(cond("isEqual", 0, ld("size", ld("intersection", "${validationData}", "${segmentsEntered}"))), [
+        set("isValid", false),
+      ])
+    ]),
+    ifL(cond("isEqual", "${zapAction}", "left_segment"), [
+      ifL(cond("isEqual", 0, ld("size", ld("intersection", "${validationData}", "${segmentsLeft}"))), [
+        set("isValid", false),
+      ])
+    ])
+  ],
+  isValidZap: returnValue([
+      set("zapInputData", get("inputData", "${zap}")),
+      set("zapAction", get("action", "${zap}")),
+      set("validations", ld("keys", "${zapInputData}")),
+      set("isValid", true),
+
+      iterateL("${validations}", "validation", [
+
+        set("validationData", get("${validation}", "${zapInputData}")),
+
+        /*
+        Trigger Validations:
+            1) User Enters Segment
+                -> User enters one or more of the whitelisted user segments
+            2) User Leaves Segment
+                -> User leaves one or more of the whitelisted user segments
+            3) User Attribute Updated
+                -> CONDITION 1:
+                    -> User is IN one or more of the whitelisted user segments
+                       AND
+                    -> Account on the user is IN one or more of the whitelisted account segments
+                -> AND CONDITION 2:
+                    -> A whitelisted user attribute was updated
+                       OR
+                    -> A whitelisted account (on the user) attribute was updated
+            4) User Event Created
+                -> User is IN one or more of the whitelisted user segments
+                   AND
+                -> Event name matches an event on the user
+            5) Account Enters Segment
+                -> User enters one or more of the whitelisted account segments
+            6) Account Leaves Segment
+                -> User leaves one or more of the whitelisted user segments
+            7) Account Attribute Update
+                -> Account is IN one or more of the whitelisted user segments
+                   AND
+                -> A whitelisted account attribute was updated
+            8) User is created
+                -> A newly created user is IN one or more of the whitelisted user segments
+            9) Account is created
+                -> A newly created account is IN one or more of the whitelisted account segments
+         */
+
+        // Event Validation
+        ifL(cond("isEqual", "${validation}", "user_event"), [
+          ifL(cond("isEqual", 0, ld("size", ld("intersection", "${validationData}", "${userEvents}"))), [
+            set("isValid", false),
+          ])
+        ]),
+
+        // User Segment Validations
+        ifL(cond("isEqual", "${validation}", "user_segments"), [
+          set("segmentsIn", ld("concat", "all_user_segments", ld("map", input("segments"), "id"))),
+          set("segmentsEntered", ld("map", ld("get", "${changes}", "segments.entered", []), "id")),
+          set("segmentsLeft", ld("map", ld("get", "${changes}", "segments.left", []), "id")),
+          route("isValidSegment")
+        ]),
+
+        // Account Segment Validations
+        ifL(cond("isEqual", "${validation}", "account_segments"), [
+          set("segmentsIn", ld("concat", "all_account_segments", ld("map", input("account_segments"), "id"))),
+          set("segmentsEntered", ld("map", ld("get", "${changes}", "account_segments.entered", []), "id")),
+          set("segmentsLeft", ld("map", ld("get", "${changes}", "account_segments.left", []), "id")),
+          route("isValidSegment")
+        ]),
+
+        // User/Account Attribute Validations
+        ifL(or([
+            cond("isEqual", "${validation}", "user_attributes"),
+            cond("isEqual", "${validation}", "account_attributes")
+          ]), [
+            set("zapUserAttributes", get("user_attributes", "${zapInputData}")),
+            set("zapAccountAttributes", get("account_attributes", "${zapInputData}")),
+
+            set("hasMatchingUserAttributeChange", cond("lessThan", 0, ld("size", ld("intersection", "${zapUserAttributes}", "${userChangedAttributes}")))),
+            set("hasMatchingAccountAttributeChange", cond("lessThan", 0, ld("size", ld("intersection", "${zapAccountAttributes}", "${accountChangedAttributes}")))),
+
+            ifL([not("${hasMatchingUserAttributeChange}"), not("${hasMatchingAccountAttributeChange}")], [
+              set("isValid", false),
+            ])
+          ])
+      ]),
     ],
     "${isValid}"
   ),
   filterZaps: [
     iterateL("${zaps}", "zap", [
-      set("zapInputData", get("inputData", "${zap}")),
-      set("validations", ld("keys", "${zapInputData}")),
-      set("zapAction", get("action", "${zap}")),
-
-      set("zapUserEvents", get("user_event", "${zapInputData}")),
-      set("zapUserSegments", get("user_segments", "${zapInputData}")),
-      set("zapUserAttributes", get("user_attributes", "${zapInputData}")),
-      set("zapAccountSegments", get("account_segments", "${zapInputData}")),
-      set("zapAccountAttributes", get("account_attributes", "${zapInputData}")),
-
       ifL(cond("isEqual", true, route("isValidZap")), [
         set("filteredZaps", ld("concat", "${filteredZaps}", "${zap}"))
       ])
     ])
   ],
   filterUserMessage: [
+    set("entityType", "user"),
     set("zaps", []),
     set("filteredZaps", []),
     set("changes", input("changes")),
@@ -209,10 +199,7 @@ const glue = {
     set("userSegmentsEntered", ld("map", ld("get", "${changes}", "segments.entered", []), "id")),
     set("userSegmentsLeft", ld("map", ld("get", "${changes}", "segments.left", []), "id")),
 
-    set("accountSegmentsIn", ld("concat", "all_account_segments", ld("map", input("account_segments"), "id"))),
     set("accountChangedAttributes", ld("keys", ld("get", "${changes}", "account", {}))),
-    set("accountSegmentsEntered", ld("map", ld("get", "${changes}", "account_segments.entered", []), "id")),
-    set("accountSegmentsLeft", ld("map", ld("get", "${changes}", "account_segments.left", []), "id")),
 
     set("isNewUser", ld("get", "${changes}", "is_new", false)),
     set("hasUserChanges", cond("lessThan", 0, ld("size", "${changes.user}"))),
@@ -242,6 +229,7 @@ const glue = {
     ])
   ],
   filterAccountMessage: [
+    set("entityType", "account"),
     set("zaps", []),
     set("filteredZaps", []),
     set("changes", input("changes")),
