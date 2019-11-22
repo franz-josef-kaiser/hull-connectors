@@ -89,7 +89,7 @@ export type HullContext = {|
   entities: {
     get: HullGetEntityParams => Promise<
       HullGetUserResponse | HullGetAccountResponse
-      >,
+    >,
     getSchema: HullEntityName => Promise<Array<HullEventSchemaEntry>>,
     events: {
       get: HullIncludedEvents => Promise<Array<HullFetchedEvent>>,
