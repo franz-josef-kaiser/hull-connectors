@@ -23,8 +23,10 @@ const {
   settings,
   ex,
   ld,
+  not,
   or,
-  not
+  cacheLock,
+  filterL
 } = require("hull-connector-framework/src/purplefusion/language");
 
 const {
@@ -33,6 +35,10 @@ const {
 
 function hubspot(op: string, param?: any): Svc {
   return new Svc({ name: "hubspot", op }, param);
+}
+
+function hubspotSyncAgent(op: string, param?: any): Svc {
+  return new Svc({ name: "hubspot_service", op }, param);
 }
 
 const refreshTokenDataTemplate = {
@@ -109,8 +115,8 @@ const glue = {
       route("setEventMap"),
       set("service_name", "hubspot"),
       ifL(cond("notEmpty", settings("events_last_fetch_started_at")), {
-        do: set("startTimestamp", ex(moment(settings("events_last_fetch_started_at")), "valueOf")),
-        eldo: set("startTimestamp", ex(ex(moment(), "subtract", { minutes: 6 }), "valueOf"))
+        do: set("startTimestamp", settings("events_last_fetch_started_at")),
+        eldo: set("startTimestamp", ex(ex(moment(), "subtract", { minutes: 5 }), "valueOf"))
       }),
       set("initialEndpoint", "getRecentEmailEvents"),
       set("offsetEndpoint", "getRecentEmailEventsWithOffset"),
@@ -128,10 +134,11 @@ const glue = {
      */
     set("limit", 300),
     ifL(cond("notEmpty", set("hubspotResponse", hubspot("${initialEndpoint}"))), [
-      set("last_sync", moment()),
+
       set("hasMore", get("hasMore", "${hubspotResponse}")),
 
       loopL([
+        set("last_sync", ex(moment(), "valueOf")),
         ifL([
           "${hasMore}", cond("notEmpty", "${offset}")
         ], [
@@ -145,6 +152,7 @@ const glue = {
           eldo: loopEndL()
         })
       ]),
+
       settingsUpdate({
         events_last_fetch_started_at: "${last_sync}"
       })
@@ -199,6 +207,44 @@ const glue = {
           token: "${refreshTokenResponse.token}"
         })
       )
+    ]),
+  fetchRecentContacts:
+    cacheLock("getRecentContacts",[
+      set("lastFetchAt", settings("last_fetch_timestamp")),
+      ifL(cond("isEmpty", "${lastFetchAt}"),
+        set("lastFetchAt", ex(moment(settings("last_fetch_at")), "valueOf"))),
+      ifL(cond("isEmpty", "lastFetchAt"),
+        set("lastFetchAt", ex(ex(moment(), "subtract", { hour: 1 }), "valueOf"))),
+      set("properties", hubspotSyncAgent("getContactPropertiesKeys")),
+      set("stopFetchAt", ex(moment(), "valueOf")),
+      loopL([
+        set("contactsPage", hubspot("getRecentContactsPage")),
+        ifL(cond("lessThan", "${contactsPage.time-offset}", "${lastFetchAt}"), {
+          do:
+            set("contactsToSave",
+              filterL(or([
+                cond("greaterThan", "${contact.addedAt}", "${lastFetchAt}"),
+                cond("isEqual", "${contact.addedAt}", "${lastFetchAt}"),
+              ]), "contact", "${contactsPage.contacts}")),
+          eldo: set("contactsToSave", "${contactsPage.contacts}")
+        }),
+        ifL(cond("notEmpty", "${contactsToSave}"),
+          hubspotSyncAgent("saveContacts", "${contactsToSave}")),
+        ifL(
+          or([
+            cond("isEqual", "${contactsPage.has-more}", false),
+            cond("greaterThan", "${lastFetchAt}", "${contactsPage.time-offset}"),
+            cond("isEqual", "${lastFetchAt}", "${contactsPage.time-offset}")
+          ]),
+          loopEndL()
+        ),
+        set("vidOffset", "${contactsPage.vid-offset}"),
+        set("timeOffset", "${contactsPage.time-offset}"),
+        set("contactsPage", []),
+      ]),
+      settingsUpdate({last_fetch_timestamp: "${stopFetchAt}"}),
+      ifL(cond("notEmpty", settings("last_fetch_at")),
+        settingsUpdate({last_fetch_at: null}))
     ])
 };
 

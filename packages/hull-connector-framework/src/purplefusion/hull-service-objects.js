@@ -29,6 +29,11 @@ import type { ServiceObjectDefinition } from "./types";
 //   external_ids: Array<String>;
 // }
 
+const HullEnumMap: ServiceObjectDefinition = {
+  service_name: "hull_enum_map",
+  name: "HullEnumMap"
+}
+
 const WebPayload: ServiceObjectDefinition = {
   service_name: "incoming_webpayload",
   name: "WebPayload"
@@ -108,6 +113,7 @@ const HullApiEventDefinition: ServiceObjectDefinition = {
 
 
 module.exports = {
+  HullEnumMap,
   WebPayload,
   HullIncomingUser,
   HullIncomingAccount,
