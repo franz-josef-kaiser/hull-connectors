@@ -29,7 +29,7 @@ describe("Outgoing User Event Tests", () => {
       const message1 =
         {
           "user": {
-            "id": "user_id_1",
+            "id": "5bd329d5e2bcf3eeaf000099",
             "email": "bob@bobby.com",
             "segment_ids": [
               "user_segment_1"
@@ -99,8 +99,8 @@ describe("Outgoing User Event Tests", () => {
             expect.objectContaining({"url": "https://hooks.zapier.com/hooks/standard/5687326/user-event-created/1", "method": "POST"})
           ],
           ["info", "outgoing.user.success",
-            expect.objectContaining({ "subject_type": "user", "user_email": "bob@bobby.com" }),
-            expect.objectContaining({ "data": expect.objectContaining({"message_id": "message_1"}), "type": "User", "operation": "post" })
+            expect.objectContaining({ "subject_type": "user", "user_id": "5bd329d5e2bcf3eeaf000099", "user_email": "bob@bobby.com" }),
+            expect.objectContaining({ "data": expect.objectContaining({"message_id": "message_1"}), "type": "User" })
           ],
           ["info", "outgoing.job.success", { "request_id": expect.whatever() }, { "jobName": "Outgoing Data", "type": "user" }]
         ],
@@ -132,7 +132,7 @@ describe("Outgoing User Event Tests", () => {
       const message1 =
         {
           "user": {
-            "id": "user_id_1",
+            "id": "5bd329d5e2bcf3eeaf000099",
             "email": "bob@bobby.com",
             "segment_ids": [
               "user_segment_1"

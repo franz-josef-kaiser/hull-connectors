@@ -114,7 +114,7 @@ describe("Outgoing Account Tests", () => {
           ],
           ["info", "outgoing.account.success",
             expect.objectContaining({ "subject_type": "account", "account_id": "5bd329d5e2bcf3eeaf000099" }),
-            expect.objectContaining({ "data": expect.objectContaining({"message_id": "message_1"}), "type": "Account", "operation": "post" })
+            expect.objectContaining({ "data": expect.objectContaining({"message_id": "message_1"}), "type": "Account" })
           ],
           ["info", "outgoing.job.success", { "request_id": expect.whatever() }, { "jobName": "Outgoing Data", "type": "account" }]
         ],
@@ -265,11 +265,11 @@ describe("Outgoing Account Tests", () => {
           ],
           ["info", "outgoing.account.success",
             expect.objectContaining({ "subject_type": "account", "account_id": "5bd329d5e2bcf3eeaf000099" }),
-            expect.objectContaining({ "data": expect.objectContaining({"message_id": "message_1"}), "type": "Account", "operation": "post" })
+            expect.objectContaining({ "data": expect.objectContaining({"message_id": "message_1"}), "type": "Account" })
           ],
           ["info", "outgoing.account.success",
             expect.objectContaining({ "subject_type": "account", "account_id": "5bd329d5e2bcf3eeaf000099" }),
-            expect.objectContaining({ "data": expect.objectContaining({"message_id": "message_1"}), "type": "Account", "operation": "post" })
+            expect.objectContaining({ "data": expect.objectContaining({"message_id": "message_1"}), "type": "Account" })
           ],
           ["info", "outgoing.job.success", { "request_id": expect.whatever() }, { "jobName": "Outgoing Data", "type": "account" }]
         ],
@@ -419,15 +419,15 @@ describe("Outgoing Account Tests", () => {
           ],
           ["info", "outgoing.account.success",
             expect.objectContaining({ "subject_type": "account", "account_id": "5bd329d5e2bcf3eeaf000099" }),
-            expect.objectContaining({ "data": expect.objectContaining({"message_id": "message_1"}), "type": "Account", "operation": "post" })
+            expect.objectContaining({ "data": expect.objectContaining({"message_id": "message_1"}), "type": "Account" })
           ],
           ["info", "outgoing.account.success",
             expect.objectContaining({ "subject_type": "account", "account_id": "5bd329d5e2bcf3eeaf000099" }),
-            expect.objectContaining({ "data": expect.objectContaining({"message_id": "message_1"}), "type": "Account", "operation": "post" })
+            expect.objectContaining({ "data": expect.objectContaining({"message_id": "message_1"}), "type": "Account" })
           ],
           ["info", "outgoing.account.success",
             expect.objectContaining({ "subject_type": "account", "account_id": "5bd329d5e2bcf3eeaf000099" }),
-            expect.objectContaining({ "data": expect.objectContaining({"message_id": "message_1"}), "type": "Account", "operation": "post" })
+            expect.objectContaining({ "data": expect.objectContaining({"message_id": "message_1"}), "type": "Account" })
           ],
           ["info", "outgoing.job.success", { "request_id": expect.whatever() }, { "jobName": "Outgoing Data", "type": "account" }]
         ],
@@ -598,15 +598,15 @@ describe("Outgoing Account Tests", () => {
           ],
           ["info", "outgoing.account.success",
             expect.objectContaining({ "subject_type": "account",  "account_domain": "apple.com", "account_id": "5bd329d5e2bcf3eeaf000099" }),
-            expect.objectContaining({ "data": expect.objectContaining({"message_id": "message_1"}), "type": "Account", "operation": "post" })
+            expect.objectContaining({ "data": expect.objectContaining({"message_id": "message_1"}), "type": "Account" })
           ],
           ["info", "outgoing.account.success",
             expect.objectContaining({ "subject_type": "account",  "account_domain": "apple.com", "account_id": "5bd329d5e2bcf3eeaf000099" }),
-            expect.objectContaining({ "data": expect.objectContaining({"message_id": "message_2"}), "type": "Account", "operation": "post" })
+            expect.objectContaining({ "data": expect.objectContaining({"message_id": "message_2"}), "type": "Account" })
           ],
           ["info", "outgoing.account.success",
             expect.objectContaining({ "subject_type": "account",  "account_domain": "apple.com", "account_id": "5bd329d5e2bcf3eeaf000099" }),
-            expect.objectContaining({ "data": expect.objectContaining({"message_id": "message_3"}), "type": "Account", "operation": "post" })
+            expect.objectContaining({ "data": expect.objectContaining({"message_id": "message_3"}), "type": "Account" })
           ],
           ["info", "outgoing.job.success", { "request_id": expect.whatever() }, { "jobName": "Outgoing Data", "type": "account" }]
         ],
