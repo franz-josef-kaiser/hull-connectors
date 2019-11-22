@@ -1,0 +1,56 @@
+{
+  "name": "Read API",
+  "description": "A Read API for Hull",
+  "tags": [
+    "smart-notifier"
+  ],
+  "logo": "logo.png",
+  "picture": "picture.png",
+  "ui": false,
+  "readme": "readme.md",
+  "version": "0.3.0",
+  "private_settings": [],
+  "resources": [],
+  "settings_sections": [
+    {
+      "title": "Credentials",
+      "description": "Security Token",
+      "properties": [
+        "json.credentials"
+      ]
+    }
+  ],
+  "json": [
+    {
+      "url": "/credentials",
+      "name": "credentials",
+      "format": "credentials",
+      "title": "Credentials",
+      "description": "The URL to call as POST",
+      "type": "string",
+      "handler": "credentialsHandler"
+    },
+    {
+      "url": "/get",
+      "handler": "entityHandler",
+      "options": {
+        "respondWithError": true
+      }
+    }
+  ],
+  "statuses": [],
+  "schedules": [],
+  "status": {},
+  "subscriptions": [
+    {
+      "url": "/smart-notifier",
+      "conditions": {
+        "channels": {
+          "only": [
+            "ship:update"
+          ]
+        }
+      }
+    }
+  ]
+}
