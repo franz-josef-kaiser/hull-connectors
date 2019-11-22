@@ -49,7 +49,6 @@ function segmentInZapierWhitelist(
   const segmentIds = _.map(segments, "id");
   const isWhitelisted = !_.isEmpty(_.intersection(zapierSegmentWhitelist, segmentIds));
 
-  console.log(`is ${entityType} whitelisted: ${isWhitelisted} - msf: ${multi_entity_segment_filtering}`);
   if (!isWhitelisted) {
     return false;
   }
@@ -91,18 +90,6 @@ function performSegmentChangedTrigger({ entityType, action }) {
 
         if (segmentActedOn) {
           filteredMessages.push(message);
-        } else {
-          z.console.log("skipping message:", {
-            entityType,
-            inputData,
-            message_id: message.message_id,
-            user_segments: message.segments,
-            account_segments: message.account_segments,
-            user_changes: message.changes.user,
-            user_segment_changes: message.changes.segments,
-            account_changes: message.changes.account,
-            account_segment_changes: message.changes.account_segments
-          });
         }
       }
     });
@@ -141,13 +128,6 @@ function isValidMessage(z, bundle, entityType, message, action) {
     _.isEmpty(zapierAttributesWhitelist) || !_.isEmpty(_.intersection(zapierAttributesWhitelist, changedAttributes));
 
   if (!hasMatchingChangedAttributes || !hasMatchingSegments) {
-    z.console.log("skipping message:", {
-      message_id: message.message_id,
-      entityType,
-      inputData,
-      hasMatchingChangedAttributes,
-      hasMatchingSegments
-    });
     return false;
   }
 
@@ -172,20 +152,10 @@ function performAttributesUpdatedTrigger({ entityType, action }) {
       const hasUserAttributes = !_.isEmpty(_.get(bundle, `inputData.user_attributes`, []));
       const hasAccountAttributes = !_.isEmpty(_.get(bundle, `inputData.account_attributes`, []));
 
-      if ((hasUserAttributes || hasAccountAttributes) && (hasUserChanges || hasAccountChanges)) {
+      if ((hasUserAttributes && hasUserChanges) || (hasAccountAttributes && hasAccountChanges)) {
         if (isValidMessage(z, bundle, entityType, message, action)) {
           filteredMessages.push(message);
         }
-      } else {
-        z.console.log("skipping message:", {
-          message_id: message.message_id,
-          entityType,
-          inputData: _.get(bundle, "inputData", []),
-          hasUserAttributes,
-          hasAccountAttributes,
-          hasUserChanges,
-          hasAccountChanges
-        });
       }
     });
 
@@ -214,12 +184,6 @@ function performEventCreatedTrigger({ entityType, action }) {
       if (!_.isEmpty(userEvents) && hasMatchingSegments &&
         !_.isEmpty(_.intersection(userEvents, zapierUseEventsWhitelist))) {
           filteredMessages.push(message);
-      } else {
-        z.console.log("skipping message:", {
-          message_id: message.message_id,
-          entityType,
-          hasMatchingSegments
-        });
       }
     });
 
