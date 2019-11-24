@@ -9,6 +9,7 @@ import type {
 const propertiesUtils = require("./utils/properties");
 const settingsUtils = require("./utils/settings");
 const traitsUtils = require("./utils/traits");
+const claimsUtils = require("./utils/claims");
 
 export type HullEntityScopedClient =
   | EntityScopedClient
@@ -41,7 +42,7 @@ export type HullAttributeOperation = {|
 /**
  * Possible entity types
  */
-export type HullEntityType = "user" | "account";
+export type HullEntityName = "user" | "account";
 export type HullSegmentType = "users_segment" | "accounts_segment";
 
 /**
@@ -186,6 +187,7 @@ export type HullUser = {
   id: string,
   email?: ?string,
   contact_email?: ?string,
+  last_known_ip?: string,
   external_id: ?string,
   anonymous_ids: ?Array<string>,
   account?: HullAccount,
@@ -205,7 +207,50 @@ export type HullEntity = HullAccount | HullUser;
  * Event coming from platform
  */
 export type HullEventName = string;
-export type HullEventContext = {};
+export type HullEventContext = {
+  useragent?: string,
+  device?: {
+    name?: string
+  },
+  referrer?: {
+    url?: string,
+    host?: string,
+    path?: string
+  },
+  os?: {
+    name?: string,
+    version?: string
+  },
+  browser?: {
+    major?: string,
+    name?: string,
+    version?: string
+  },
+  location?: {
+    country?: string,
+    city?: string,
+    timezone?: string,
+    longitude?: string,
+    latitude?: string,
+    region?: string,
+    countryname?: string,
+    regionname?: string,
+    zipcode?: string
+  },
+  campaign?: {
+    term?: string,
+    medium?: string,
+    name?: string,
+    content?: string,
+    source?: string
+  },
+  ip?: string,
+  page?: {
+    url?: string,
+    host?: string,
+    path?: string
+  }
+};
 export type HullEventProperties = {};
 export type HullEvent = {
   event_id: string,
@@ -244,7 +289,7 @@ export type HullClientConfig = {
   logLevel?: "info" | "error" | "warn" | "debug",
   userClaim?: string | HullUserClaims,
   accountClaim?: string | HullAccountClaims,
-  subjectType?: HullEntityType,
+  subjectType?: HullEntityName,
   additionalClaims?: HullAdditionalClaims,
   accessToken?: string,
   hostSecret?: string,
@@ -282,6 +327,7 @@ export type HullClientStaticLogger = {|
  */
 export type HullClientUtils = {|
   traits: typeof traitsUtils,
+  claims: typeof claimsUtils,
   settings: typeof settingsUtils,
   properties: typeof propertiesUtils
 |};

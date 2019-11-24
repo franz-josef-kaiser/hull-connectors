@@ -18,10 +18,10 @@ import scopedUserMethods from "./sandbox/user_methods";
 const LIBS = { _, moment, urijs };
 export default async function compute(
   ctx: HullContext,
-  { payload, code, preview, claims, source, entityType }: ComputeOptions
+  { payload, code, preview, claims, source, entity }: ComputeOptions
 ): Promise<Result> {
   const { connector, client } = ctx;
-  const result = {
+  const result: Result = {
     logs: [],
     logsForLogger: [],
     errors: [],
@@ -32,7 +32,7 @@ export default async function compute(
     accountLinks: Map({}),
     events: [],
     claims,
-    entityType,
+    entity,
     success: false,
     isAsync: false
   };
@@ -42,20 +42,17 @@ export default async function compute(
     errors: result.errors
   };
   const hull = getHullContext(client, result, source);
+  const scopedClient = entity === "account" ? hull.asAccount : hull.asUser;
   const frozen = {
     ...payload,
     ...LIBS,
     ...(claims ? scopedUserMethods(payload) : {}),
-    request: getRequest(result),
-    hull: _.size(claims)
-      ? (entityType === "account" ? hull.asAccount : hull.asUser)(claims)
-      : hull,
+    request: getRequest(ctx, result),
+    hull: _.size(claims) ? scopedClient(claims) : hull,
     console: getConsole(result, preview),
     connector,
     ship: connector
   };
-
-  let responses;
 
   try {
     const vm = new VM({
@@ -66,11 +63,7 @@ export default async function compute(
     // For Processor keep backwards-compatible signature of having `traits` and `track` at top level
     if (_.size(claims)) {
       _.map(
-        _.pick(
-          (entityType === "account" ? hull.asAccount : hull.asUser)(claims),
-          "traits",
-          "track"
-        ),
+        _.pick(scopedClient(claims), "traits", "track"),
         (lib, key: string) => {
           const l = function l(...args) {
             result.logs.unshift(
@@ -83,48 +76,21 @@ export default async function compute(
       );
     }
 
-    responses = vm.run(`
-      responses = ${check.wrapCode(code)}
-      responses;
-    `);
-  } catch (err) {
-    result.errors.push(err.stack.split("at ContextifyScript")[0]);
-  }
+    await vm.run(check.wrapCode(code));
 
-  if (preview) {
     // Only lint in Preview mode.
-    const syntaxErrors = check.invalid(ctx, code);
-    if (syntaxErrors && syntaxErrors.length) {
-      result.errors.push(..._.map(syntaxErrors, "annotated"));
+    if (preview) {
+      const syntaxErrors = check.invalid(ctx, code);
+      if (syntaxErrors && syntaxErrors.length) {
+        result.errors.push(..._.map(syntaxErrors, "annotated"));
+      }
+
+      const linterErrors = check.lint(ctx, code, frozen);
+      if (linterErrors && linterErrors.length) {
+        result.errors.push(...linterErrors);
+      }
     }
 
-    const linterErrors = check.lint(ctx, code, frozen);
-    if (linterErrors && linterErrors.length) {
-      result.errors.push(...linterErrors);
-    }
-  }
-
-  if (
-    result.isAsync &&
-    (!responses || !responses.then || !_.isFunction(responses.then))
-  ) {
-    result.errors.push(
-      "It seems you’re using 'request' which is asynchronous."
-    );
-    result.errors.push(
-      `You need to return a 'new Promise' and 'resolve' or 'reject' it in your 'request' callback:
-
-      return request(xxxx).then((res) => {
-        const something = response //some-processing;
-
-      })`
-    );
-  }
-
-  try {
-    // If we returned a Promise, await until we've got resolved it.
-    // If it's not a promise we'll continue immediately
-    await Promise.all([responses]);
     // Slice Events to 10 max
     if (preview && result.events.length > 10) {
       result.logs.unshift(result.events);
@@ -148,8 +114,9 @@ export default async function compute(
         err.message === "Error: ESOCKETTIMEDOUT" ? err.message : err.error
       );
     } else {
-      result.errors.push(err.toString());
+      result.errors.push(err.stack.split("at new Script")[0]);
     }
   }
+
   return result;
 }

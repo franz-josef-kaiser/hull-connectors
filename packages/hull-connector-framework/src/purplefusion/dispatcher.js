@@ -45,7 +45,7 @@ class HullDispatcher {
   // could have multiple services in the future... maybe take in an array?
   // really, we could run all of them in the same place potentially
   constructor(glue: Object, services: Object, transforms: ServiceTransforms, ensure: string) {
-    this.glue = glue;
+    this.glue = _.assign({}, glue, require("./glue-shared"));
     this.services = new ServiceEngine(this, services, transforms);
     this.ensure = ensure;
     this.transforms = new TransformImpl(transforms);
@@ -273,7 +273,11 @@ class HullDispatcher {
 
     if (type === 'logic') {
 
-      if (instructionName === 'if') {
+      if (instructionName === 'return') {
+        await this.resolve(context, instructionOptions.instructions, serviceData);
+        const a = await this.resolve(context, instructionOptions.returnValue, serviceData);
+        return a;
+      } else if (instructionName === 'if') {
 
         // if this instructions doesn't have any params, it's just a "do"
         let executeDo = true;
@@ -689,7 +693,7 @@ class HullDispatcher {
         //   result = this.transforms.transform(context, obj, objType, opInstruction.resultType);
         // }
 
-        return this.transforms.transform(context, obj, opInstruction.resultType);
+        return await this.transforms.transform(this, context, obj, opInstruction.resultType);
 
       } else if (opInstruction.name === "jsonata") {
 

@@ -1,5 +1,25 @@
 # CHANGELOG
 
+## v0.1.9-monorepo
+- [hull-pipedrive] New Connector!
+- [hull-hubspot] Enhanced fetching reduces number of api calls and number of fetches running in parallel
+- [hull-node] Upped timeout to avoid aborted issues when there are many requests in flight
+- [hull-outreach] Added ability to pull stageName and ownerEmail
+- [hull-connector-framework] Refactored service engine, also added new transform logic
+
+## v0.1.8-monorepo
+- [hull-hubspot] support entity deletions
+
+## v0.1.7-monorepo
+- mailchimp now defaults to not pulling events on user updates
+- disable incoming webhooks when connector is disabled
+
+## v0.1.6-monorepo
+- kraken level filtering on segment for Hubspot/Outreach/Customerio/Mailchimp
+
+## v0.1.5-monorepo
+- hubspot filtering unneeded updates
+
 ## v0.1.4-monorepo
 - merge hubspot incoming events
 

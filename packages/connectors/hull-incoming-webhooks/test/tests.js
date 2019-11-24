@@ -100,7 +100,7 @@ module.exports = [
           userTraits: [[{ id: "123" }, { "my-group/customerioid": "321" }]],
           accountTraits: [],
           claims: undefined,
-          entityType: undefined,
+          entity: undefined,
           accountLinks: [],
           accountAliases: [],
           userAliases: [],
@@ -110,8 +110,7 @@ module.exports = [
         }
       ],
       [
-        "info",
-        "incoming.user.success",
+        "debug", "incoming.user.success",
         {
           subject_type: "user",
           user_id: "123"
@@ -119,7 +118,8 @@ module.exports = [
         {
           attributes: {
             "my-group/customerioid": "321"
-          }
+          },
+          no_ops: {}
         }
       ]
     ],
@@ -230,7 +230,7 @@ module.exports = [
             ]
           ],
           claims: undefined,
-          entityType: undefined,
+          entity: undefined,
           events: [
             {
               claims: {
@@ -255,8 +255,7 @@ module.exports = [
         }
       ],
       [
-        "info",
-        "incoming.user.success",
+        "debug", "incoming.user.success",
         {
           subject_type: "user",
           user_id: "123"
@@ -264,11 +263,12 @@ module.exports = [
         {
           attributes: {
             "my-group/foo": "321"
-          }
+          },
+          no_ops: {}
         }
       ],
       [
-        "info",
+        "debug",
         "incoming.account.success",
         {
           subject_type: "account",
@@ -277,11 +277,12 @@ module.exports = [
         {
           attributes: {
             "foo/accountFoo": "accountBar"
-          }
+          },
+          no_ops: {}
         }
       ],
       [
-        "info",
+        "debug",
         "incoming.account.success",
         {
           subject_type: "account",
@@ -290,12 +291,12 @@ module.exports = [
         {
           attributes: {
             linkedAccountFoo: "linkedAccountBar"
-          }
+          },
+          no_ops: {}
         }
       ],
       [
-        "info",
-        "incoming.event.success",
+        "debug", "incoming.event.success",
         {
           subject_type: "user",
           user_id: "123"
@@ -308,8 +309,7 @@ module.exports = [
         }
       ],
       [
-        "info",
-        "incoming.account.link.success",
+        "debug", "incoming.account.link.success",
         {
           subject_type: "user",
           user_id: "123"
@@ -318,7 +318,7 @@ module.exports = [
           accountClaims: {
             external_id: "external"
           },
-          claims: {
+          userClaims: {
             id: "123"
           }
         }
@@ -455,7 +455,7 @@ module.exports = [
             ]
           ],
           claims: undefined,
-          entityType: undefined,
+          entity: undefined,
           accountAliases: [],
           userAliases: [],
           events: [
@@ -489,8 +489,7 @@ module.exports = [
         }
       ],
       [
-        "info",
-        "incoming.user.success",
+        "debug", "incoming.user.success",
         {
           subject_type: "user",
           user_id: "123"
@@ -498,11 +497,12 @@ module.exports = [
         {
           attributes: {
             "my-group/foo": "321"
-          }
+          },
+          no_ops: {}
         }
       ],
       [
-        "info",
+        "debug",
         "incoming.account.success",
         {
           subject_type: "account",
@@ -511,11 +511,12 @@ module.exports = [
         {
           attributes: {
             "foo/accountFoo": "accountBar"
-          }
+          },
+          no_ops: {}
         }
       ],
       [
-        "info",
+        "debug",
         "incoming.account.success",
         {
           subject_type: "account",
@@ -524,12 +525,12 @@ module.exports = [
         {
           attributes: {
             linkedAccountFoo: "linkedAccountBar"
-          }
+          },
+          no_ops: {}
         }
       ],
       [
-        "info",
-        "incoming.event.success",
+        "debug", "incoming.event.success",
         {
           subject_type: "user",
           user_id: "123"
@@ -542,15 +543,14 @@ module.exports = [
         }
       ],
       [
-        "info",
-        "incoming.account.link.success",
+        "debug", "incoming.account.link.success",
         {
           subject_type: "user",
           user_id: "123"
         },
         {
           accountClaims: { external_id: "external" },
-          claims: { id: "123" }
+          userClaims: { id: "123" }
         }
       ]
     ],
@@ -648,7 +648,7 @@ module.exports = [
           ],
           accountTraits: [],
           claims: undefined,
-          entityType: undefined,
+          entity: undefined,
           events: [
             {
               claims: {
@@ -673,8 +673,7 @@ module.exports = [
         }
       ],
       [
-        "info",
-        "incoming.user.success",
+        "debug", "incoming.user.success",
         {
           subject_type: "user",
           user_id: "123"
@@ -682,12 +681,12 @@ module.exports = [
         {
           attributes: {
             customerioid: "4567"
-          }
+          },
+          no_ops: {}
         }
       ],
       [
-        "info",
-        "incoming.event.success",
+        "debug", "incoming.event.success",
         {
           subject_type: "user",
           user_id: "123"
@@ -769,7 +768,7 @@ module.exports = [
             ]
           ],
           claims: undefined,
-          entityType: undefined,
+          entity: undefined,
           events: [],
           accountLinks: [],
           accountAliases: [],
@@ -779,7 +778,7 @@ module.exports = [
         }
       ],
       [
-        "info",
+        "debug",
         "incoming.account.success",
         {
           subject_type: "account",
@@ -788,7 +787,8 @@ module.exports = [
         {
           attributes: {
             customerioid: "4567"
-          }
+          },
+          no_ops: {}
         }
       ]
     ],
@@ -851,7 +851,7 @@ module.exports = [
             ]
           ],
           claims: undefined,
-          entityType: undefined,
+          entity: undefined,
           events: [],
           accountLinks: [],
           accountAliases: [],
@@ -861,7 +861,7 @@ module.exports = [
         }
       ],
       [
-        "info",
+        "debug",
         "incoming.account.success",
         {
           subject_type: "account",
@@ -871,7 +871,8 @@ module.exports = [
           attributes: {
             foo: null,
             bar: "baz"
-          }
+          },
+          no_ops: {}
         }
       ]
     ],
@@ -928,7 +929,7 @@ module.exports = [
           userTraits: [[{ id: "123" }, { foo: "bar" }]],
           accountTraits: [],
           claims: undefined,
-          entityType: undefined,
+          entity: undefined,
           accountLinks: [],
           accountAliases: [],
           userAliases: [],
@@ -938,8 +939,7 @@ module.exports = [
         }
       ],
       [
-        "info",
-        "incoming.user.success",
+        "debug", "incoming.user.success",
         {
           subject_type: "user",
           user_id: "123"
@@ -947,7 +947,8 @@ module.exports = [
         {
           attributes: {
             foo: "bar"
-          }
+          },
+          no_ops: {}
         }
       ]
     ],
@@ -996,7 +997,7 @@ module.exports = [
           userTraits: [],
           accountTraits: [],
           claims: undefined,
-          entityType: undefined,
+          entity: undefined,
           accountLinks: [],
           accountAliases: [
             [
@@ -1021,7 +1022,7 @@ module.exports = [
           user_id: "123"
         },
         {
-          aliases: { 'Map { "email": "foo@bar.com" }': "alias" },
+          operations: [[{ email: "foo@bar.com" }, "alias"]],
           claims: { id: "123" }
         }
       ],
@@ -1033,10 +1034,10 @@ module.exports = [
           account_domain: "foo.com"
         },
         {
-          aliases: {
-            'Map { "external_id": "123" }': "alias",
-            'Map { "anonymous_id": "nooot" }': "unalias"
-          },
+          operations: [
+            [{ external_id: "123" }, "alias"],
+            [{ anonymous_id: "nooot" }, "unalias"]
+          ],
           claims: { domain: "foo.com" }
         }
       ]

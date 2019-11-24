@@ -17,7 +17,15 @@ const LIBS = [
   "captureException",
   "captureMessage"
 ];
-const COMMON_VARS = ["ship", "results", "errors", "logs", "track", "traits"];
+const COMMON_VARS = [
+  "ship",
+  "connector",
+  "results",
+  "errors",
+  "logs",
+  "track",
+  "traits"
+];
 const linter = new Linter();
 
 const getGlobals = (vars: Array<Array<string>>) =>
@@ -25,7 +33,12 @@ const getGlobals = (vars: Array<Array<string>>) =>
 
 const getConfig = (payload?: Object = {}) => ({
   env: {
-    es6: true
+    es6: true,
+    node: true
+  },
+  parserOptions: {
+    ecmaVersion: 2017,
+    sourceType: "module"
   },
   rules: {
     "no-undef": [2]

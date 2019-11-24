@@ -165,10 +165,27 @@ class SequalizeSdk {
     return EVENT_SCHEMA;
   }
 
-  async initSchema(params: { schema: any, tableName: string } ) {
+  /**
+   * MUST return a new object, and not a reference object
+   * sequalize mutates this when you pass it in
+   * @returns {Promise<{indexes: {unique: string, fields: string[]}[]}>}
+   */
+  async createEventIndexes() {
+    return {
+      indexes:[
+        {
+          unique: false ,
+          fields:['user_id']
+        }
+      ]
+    };
+  }
+
+  async initSchema(params: { schema: any, tableName: string, indexes: Object } ) {
     return this.getSequelizeConnection().define(
       params.tableName,
-      params.schema
+      params.schema,
+      params.indexes
     );
   }
 
@@ -248,7 +265,7 @@ class SequalizeSdk {
       // Remember, when creating the object, we'll still put these fields in the payload
       // but the sequelize library "gracefully" handles attributes that don't map
       // where it will just exclude them from being sent
-      const reservedAttributes = ["indexed_at", "updated_at", "segment_ids"];
+      const reservedAttributes = ["indexed_at", "updated_at", "segment_ids", "doctype"];
 
       return _.some(_.get(message, path), (value, key) => {
         let normalizedName = normalizeFieldName(key);

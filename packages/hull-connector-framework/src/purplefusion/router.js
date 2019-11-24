@@ -153,15 +153,14 @@ class HullRouter {
         .then(results => {
           dispatcher.close();
 
-          if (callback) {
-            // TODO make sure this works if callback returns promise
-            return Promise.resolve(callback(context, results))
-          }
-
           context.client.logger.info(`${_.toLower(direction)}.job.success`, {
             jobName: `${_.upperFirst(direction)} Data`,
             type: _.toLower(objectType.name)
           });
+          if (callback) {
+            // TODO make sure this works if callback returns promise
+            return Promise.resolve(callback(context, results))
+          }
           return Promise.resolve(results);
         }).catch(error => {
           dispatcher.close();
