@@ -1,9 +1,21 @@
-function statusCheck(req, res) {
-  const { client } = req.hull;
-  const messages = [];
-  const status = "ok";
-  res.json({ messages, status });
-  return client.put(`${req.hull.ship.id}/status`, { status, messages });
-}
+// @flow
+import type {
+  HullContext,
+  HullIncomingHandlerMessage,
+  HullStatusResponse
+} from "hull";
 
-module.exports = statusCheck;
+const statusHandler = async (
+  ctx: HullContext,
+  _incomingMessages: HullIncomingHandlerMessage
+): HullStatusResponse => {
+  // const { connector, client } = ctx;
+  // const { private_settings } = connector;
+
+  return {
+    status: "ok",
+    messages: ""
+  };
+};
+
+export default statusHandler;

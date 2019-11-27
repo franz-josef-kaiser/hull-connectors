@@ -1,58 +1,145 @@
 {
   "name": "Stripe",
   "description": "Collect Stripe Charges and Subscription events",
-  "tags": ["incoming", "oneColumn", "smart-notifier"],
-  "source": "stripe",
-  "logo": "logo.png",
   "picture": "picture.png",
-  "admin": "auth",
-  "tabs": [
-    {
-      "title": "Credentials",
-      "url": "auth",
-      "size": "small",
-      "editable": false
-    }
+  "version": "0.1.9-monorepo",
+  "tags": [
+    "kraken"
   ],
-  "version": "0.2.3",
-  "settings": [],
   "private_settings": [
+    {
+      "name": "oauth",
+      "title": "Credentials",
+      "description": "On the authentication screen, log into Slack with your username and password, if you are not already logged in",
+      "format": "oauth",
+      "type": "string",
+      "handler": "oauth",
+      "url": "/auth",
+      "options": {
+        "name": "Stripe",
+        "strategy": {
+          "scope": [
+            "read_only"
+          ],
+          "stripe_landing": "login",
+          "skipUserProfile": true
+        }
+      }
+    },
     {
       "name": "metadata_id_parameter",
       "title": "Metadata field",
-      "description":
-        "The name of the field in the Stripe payload where the User ID is stored. If empty, we fallback to using the Email we receive",
+      "description": "The name of the field in the Stripe payload where the User ID is stored. If empty, we fallback to using the Email we receive",
       "type": "string"
     },
     {
       "name": "id_parameter",
       "title": "Which User ID to match to.",
       "type": "string",
-      "enum": ["external_id", "id", "email"],
+      "enum": [
+        "external_id",
+        "id",
+        "email"
+      ],
       "default": "external_id"
     },
     {
       "name": "use_accounts",
-      "title":
-        "Store Stripe Attributes in Account (in addition to User)",
+      "title": "Store Stripe Attributes in Account (in addition to User)",
       "default": true,
       "type": "boolean"
     }
   ],
-  "deployment_settings": [],
-  "resources": [],
+  "settings_sections": [
+    {
+      "title": "Connect with Slack",
+      "step": "credentials",
+      "properties": [
+        "private_settings.oauth"
+      ]
+    },
+    {
+      "title": "Configuration",
+      "description": "For better identity resolution, you should send the Unique IDs of your users to Stripe in the `metadata` fields, and specify here how you named them so Hull can use this field to resolve identity over the Email",
+      "properties": [
+        "private_settings.metadata_id_parameter",
+        "private_settings.id_parameter",
+        "private_settings.use_accounts"
+      ]
+    }
+  ],
   "readme": "readme.md",
   "ui": false,
-  "schedules": [
+  "json": [
+    {
+      "url": "/fetch-all",
+      "handler": "fetchAllHandler",
+      "options": {
+        "cache": {
+          "key": false
+        }
+      }
+    },
+    {
+      "url": "/sync",
+      "handler": "fetchAllHandler",
+      "options": {
+        "cache": {
+          "key": false
+        }
+      }
+    }
+  ],
+  "incoming": [
+    {
+      "url": "/incoming",
+      "handler": "incomingHandler",
+      "options": {
+        "bodyParser": "json"
+      }
+    }
+  ],
+  "status": {
+    "initial_value": "setupRequired",
+    "url": "/status",
+    "handler": "statusHandler",
+    "type": "interval",
+    "value": "5"
+  },
+  "statuses": [
     {
       "url": "/status",
-      "type": "cron",
-      "value": "0 */1 * * *"
+      "handler": "statusHandler",
+      "type": "interval",
+      "value": "5"
     }
   ],
   "subscriptions": [
     {
-      "url": "/smart-notifier"
+      "url": "/smart-notify",
+      "conditions": {
+        "channels": {
+          "only": [
+            "user:update",
+            "account:update",
+            "ship:update"
+          ]
+        }
+      },
+      "channels": [
+        {
+          "channel": "account:update",
+          "handler": "connectorUpdate"
+        },
+        {
+          "channel": "user:update",
+          "handler": "connectorUpdate"
+        },
+        {
+          "channel": "ship:update",
+          "handler": "connectorUpdate"
+        }
+      ]
     }
   ]
 }

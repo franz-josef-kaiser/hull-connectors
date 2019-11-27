@@ -1,105 +1,85 @@
-const _ = require("lodash");
+// @flow
+
+import type { HullContext } from "hull";
+import _ from "lodash";
+import Stripe from "stripe";
+import EVENTS from "../mappers/events";
+import storeEvent from "./store-event";
+import storeUser from "./store-user";
+import storeAccount from "./store-account";
 
 const getUserIdent = require("./get-user-ident");
 const getEventName = require("./get-event-name");
-const storeEvent = require("./store-event");
-const storeUser = require("./store-user");
-const storeAccount = require("./store-account");
 
+type StripeCustomer = {
+  id: string,
+  email: string,
+  metadata?: {}
+};
+type StripeCustomerHash = { [string]: StripeCustomer };
 // Recursive event fetch method;
-async function fetchEventPage(ctx, { customers, cursor }) {
-  const { client, stripe } = ctx;
-  const list = {
-    limit: 100,
-    types: [
-      "charge.succeeded",
-      "charge.refunded",
-      "customer.subscription.updated",
-      "customer.subscription.created",
-      "customer.subscription.deleted"
-    ]
-  };
-  if (cursor) list.starting_after = cursor;
-  const prev_cursor = cursor;
-  const response = await stripe.events.list(list);
-  const { has_more, data } = response;
-  client.logger.info("fetchEventPage.page", { has_more, cursor });
-  const eventIds = _.map(data, event => {
+async function fetchEvents(
+  ctx,
+  {
+    stripe,
+    customers
+  }: {
+    stripe: any,
+    customers: StripeCustomerHash
+  }
+) {
+  // eslint-disable-next-line no-restricted-syntax
+  for await (const event of stripe.events.list({
+    types: EVENTS
+  })) {
     const name = getEventName(event);
     const customer = customers[event.data.object.customer];
-    if (!customer) return null;
+    if (!customer) {
+      return null;
+    }
     const user = getUserIdent(ctx, customer);
-    const eventId = event.id;
-    storeEvent({
-      user,
-      event,
-      name,
-      hull: client
-    });
-    cursor = eventId;
-    return eventId;
-  });
-
-  if (has_more && data.length && cursor !== prev_cursor) {
-    const more = await fetchEventPage(ctx, { customers, cursor });
-    return [...eventIds, ...more];
+    storeEvent(ctx, { user, event, name });
   }
-  return eventIds;
+  return true;
 }
 
 // Recursive user fetch method;
-async function fetchUserPage(ctx, { cursor } = {}) {
-  const { ship, client, stripe } = ctx;
-  const { private_settings } = ship;
+async function fetchUsers(
+  ctx,
+  { stripe }: { stripe: any } = {}
+): StripeCustomerHash {
+  const { connector } = ctx;
+  const { private_settings } = connector;
   const { use_accounts } = private_settings;
-  const list = { limit: 100 };
-  if (cursor) list.starting_after = cursor;
+  const cc = [];
 
-  const response = await stripe.customers.list(list);
-  const { has_more, data } = response;
-  client.logger.info("fetchUserPage.page", {
-    has_more,
-    cursor,
-    after: list.starting_after
-  });
-  const customerIds = _.map(data, customer => {
+  // eslint-disable-next-line no-restricted-syntax
+  for await (const customer of stripe.customers.list()) {
     const user = getUserIdent(ctx, customer);
-    storeUser({ user, customer, hull: client });
+    storeUser(ctx, { user, customer });
     if (use_accounts) {
-      storeAccount({ user, customer, hull: client });
+      storeAccount(ctx, { user, customer });
     }
-    const customerId = customer.id;
-    cursor = customerId;
-    return _.pick(customer, "id", "email", "metadata");
-  });
-  if (has_more && data.length) {
-    const more = await fetchUserPage(ctx, { cursor });
-    return [...customerIds, ...more];
+    cc[customer.id] = _.pick(customer, "id", "email", "metadata");
   }
-  return customerIds;
+  return cc;
 }
 
-async function fetchHistory(ctx) {
-  const { client } = ctx;
+export default async function fetchHistory(ctx: HullContext) {
+  const { connector, client } = ctx;
+  const { private_settings } = connector;
+  const { token } = private_settings;
+  const stripe = Stripe(token);
   client.logger.info("incoming.batch.start");
   try {
-    const customers = await fetchUserPage(ctx);
-    const customersHash = _.reduce(
-      customers,
-      (m, v) => {
-        m[v.id] = v;
-        return m;
-      },
-      {}
-    );
-    // TODO: Fix large event lists fetching.
-    const response = await fetchEventPage(ctx, { customers: customersHash });
-    client.logger.info("incoming.batch.success", response);
-    return response;
+    const customers = await fetchUsers(ctx, { stripe });
+    await fetchEvents(ctx, {
+      stripe,
+      customers
+    });
+    return true;
   } catch (err) {
     client.logger.error("incoming.batch.error", err);
     return err;
   }
 }
-
-module.exports = fetchHistory;

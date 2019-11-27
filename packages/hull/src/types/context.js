@@ -24,6 +24,8 @@ import type {
 import {
   incomingClaims,
   settingsUpdate,
+  encrypt,
+  decrypt,
   extractRequest,
   mappingToOptions,
   mapAttributes,
@@ -105,6 +107,8 @@ export type HullContext = {|
     }
   },
   helpers: {
+    encrypt: $Call<typeof encrypt, HullContext>,
+    decrypt: $Call<typeof decrypt, HullContext>,
     settingsUpdate: $Call<typeof settingsUpdate, HullContext>,
     incomingClaims: $Call<typeof incomingClaims, HullContext>,
     extractRequest: $Call<typeof extractRequest, HullContext>,

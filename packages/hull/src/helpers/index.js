@@ -10,3 +10,5 @@ module.exports.incomingClaims = require("./incoming-claims");
 module.exports.mappingToOptions = require("./mapping-to-options");
 module.exports.mapAttributes = require("./map-attributes");
 module.exports.operations = require("./operations");
+module.exports.encrypt = require("./encrypt");
+module.exports.decrypt = require("./decrypt");

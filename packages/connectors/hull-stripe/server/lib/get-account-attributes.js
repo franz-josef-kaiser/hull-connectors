@@ -1,6 +1,7 @@
-const _ = require("lodash");
+// @flow
+import _ from "lodash";
 
-function getUserAttributes(customer) {
+function getUserAttributes(customer: { created: string }) {
   return {
     ..._.pick(customer, [
       "id",

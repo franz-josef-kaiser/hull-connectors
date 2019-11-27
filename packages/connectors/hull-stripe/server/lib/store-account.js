@@ -1,10 +1,21 @@
-const getAccountAttributes = require("./get-account-attributes");
+// @flow
+import type { HullContext, HullAccountClaims } from "hull";
 
-function storeAccount({ user, customer, hull }) {
+import getAccountAttributes from "./get-account-attributes";
+
+export default async function storeAccount(
+  ctx: HullContext,
+  {
+    user,
+    customer
+  }: {
+    user: HullAccountClaims,
+    customer: {}
+  }
+) {
+  const { client } = ctx;
+  // $FlowFixMe
   const attributes = getAccountAttributes(customer);
-  const accountClient = hull.asUser(user).account();
-  accountClient.logger.info("incoming.account.success", { attributes });
+  const accountClient = client.asUser(user).account();
   return accountClient.traits(attributes, { source: "stripe" });
 }
-
-module.exports = storeAccount;

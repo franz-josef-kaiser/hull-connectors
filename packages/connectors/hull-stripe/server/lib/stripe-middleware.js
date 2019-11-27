@@ -12,14 +12,10 @@ function stripeMiddlewareFactory({ Hull }) {
       return res.sendStatus(400);
     }
 
-    Hull.logger.info("incoming.event.start", event);
-
     if (!event.user_id) {
-      Hull.logger.info(
-        "incoming.event.warn",
-        "event payload does not contain `user_id` property"
-      );
-      return res.sendStatus(200);
+      const message = "event payload does not contain `user_id` property";
+      Hull.logger.info("incoming.event.warn", message);
+      throw new Error(message);
     }
 
     // Prevent impersonation & identity theft
@@ -27,8 +23,10 @@ function stripeMiddlewareFactory({ Hull }) {
 
     const uid = crypt.encrypt(event.user_id, req.hull.hostSecret);
     try {
-      const token = await req.hull.cache.cache.get(uid);
-      if (!token) {
+      const clientCredentialsEncryptedToken = await req.hull.cache.cache.get(
+        uid
+      );
+      if (!clientCredentialsEncryptedToken) {
         Hull.logger.error(
           "incoming.event.error",
           `can't find a user for ${event.user_id} - ${uid}`
@@ -36,7 +34,7 @@ function stripeMiddlewareFactory({ Hull }) {
         return res.sendStatus(200);
       }
       req.hull = req.hull || {};
-      req.hull.token = token;
+      req.hull.clientCredentialsEncryptedToken = clientCredentialsEncryptedToken;
       req.hull.config = null;
       return next();
     } catch (err) {

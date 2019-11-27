@@ -1,6 +1,7 @@
-const _ = require("lodash");
+// @flow
+import _ from "lodash";
 
-function getUserAttributes(customer) {
+export default function getUserAttributes(customer: { created: string }) {
   return {
     ..._.pick(customer, [
       "id",
@@ -14,5 +15,3 @@ function getUserAttributes(customer) {
     created_at: customer.created
   };
 }
-
-module.exports = getUserAttributes;
