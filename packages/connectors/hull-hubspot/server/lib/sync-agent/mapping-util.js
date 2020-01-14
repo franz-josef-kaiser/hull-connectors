@@ -699,6 +699,7 @@ class MappingUtil {
     debug("getHubspotCompanyProperties", this.companyOutgoingMapping);
     // const userSegments = this.userSegments;
     const accountData = message.account;
+    const accountChanges = message.changes.account;
     const contactProps = _.reduce(
       this.companyOutgoingMapping,
       (contactProperties, mappingEntry) => {
@@ -765,6 +766,17 @@ class MappingUtil {
           contactProperties.push({
             name: mappingEntry.hubspot_property_name,
             value
+          });
+        }
+        const accountChange = _.get(
+          accountChanges,
+          mappingEntry.hubspot_property_name,
+          null
+        );
+        if (_.isArray(accountChange) && accountChange[1] === null) {
+          contactProperties.push({
+            name: mappingEntry.hubspot_property_name,
+            value: null
           });
         }
         return contactProperties;
