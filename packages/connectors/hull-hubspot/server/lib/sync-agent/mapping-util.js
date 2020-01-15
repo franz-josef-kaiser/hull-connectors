@@ -591,7 +591,7 @@ class MappingUtil {
     const userData = userMessage.user;
     debug("getHubspotContactProperties", this.contactOutgoingMapping);
     // const userSegments = this.userSegments;
-    const userChanges = userMessage.changes.user;
+    const userChanges = _.get(userMessage, "changes.user", null);
     const contactProps = _.reduce(
       this.contactOutgoingMapping,
       (contactProperties, mappingEntry) => {
@@ -653,16 +653,18 @@ class MappingUtil {
             value
           });
         }
-        const userChange = _.get(
-          userChanges,
-          mappingEntry.hubspot_property_name,
-          null
-        );
-        if (_.isArray(userChange) && userChange[1] === null) {
-          contactProperties.push({
-            name: mappingEntry.hubspot_property_name,
-            value: null
-          });
+        if (userChanges) {
+          const userChange = _.get(
+            userChanges,
+            mappingEntry.hubspot_property_name,
+            null
+          );
+          if (_.isArray(userChange) && userChange[1] === null) {
+            contactProperties.push({
+              name: mappingEntry.hubspot_property_name,
+              value: null
+            });
+          }
         }
         return contactProperties;
       },
@@ -711,7 +713,7 @@ class MappingUtil {
     debug("getHubspotCompanyProperties", this.companyOutgoingMapping);
     // const userSegments = this.userSegments;
     const accountData = message.account;
-    const accountChanges = message.changes.account;
+    const accountChanges = _.get(message, "changes.account", null);
     const contactProps = _.reduce(
       this.companyOutgoingMapping,
       (contactProperties, mappingEntry) => {
@@ -780,16 +782,18 @@ class MappingUtil {
             value
           });
         }
-        const accountChange = _.get(
-          accountChanges,
-          mappingEntry.hubspot_property_name,
-          null
-        );
-        if (_.isArray(accountChange) && accountChange[1] === null) {
-          contactProperties.push({
-            name: mappingEntry.hubspot_property_name,
-            value: null
-          });
+        if (accountChanges) {
+          const accountChange = _.get(
+            accountChanges,
+            mappingEntry.hubspot_property_name,
+            null
+          );
+          if (_.isArray(accountChange) && accountChange[1] === null) {
+            contactProperties.push({
+              name: mappingEntry.hubspot_property_name,
+              value: null
+            });
+          }
         }
         return contactProperties;
       },
