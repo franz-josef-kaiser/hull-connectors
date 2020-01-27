@@ -3,28 +3,34 @@ jobs:
   build:
     docker:
       - image: circleci/node:10.15
-      - image: circleci/mongo:3.6.12
-      - image: circleci/redis:5.0.4
+#      - image: circleci/mongo:3.6.12
+#      - image: circleci/redis:5.0.4
     steps:
       - checkout
       - run:
-          name: Upgrade Yarn
-          command: sudo npm i -g yarn@$(node -p 'require("./package.json").engines.yarn')
-      - restore_cache:
-          name: Restore Yarn cache
-          keys:
-            - yarn-packages-{{ checksum "yarn.lock" }}
+          name: Last build id
+          command: echo $CIRCLE_COMPARE_URL
       - run:
-          name: Install Dependencies
-          command: yarn
-      - save_cache:
-          name: Save Yarn Package cache
-          key: yarn-packages-{{ checksum "yarn.lock" }}
-          paths:
-            - ~/.cache/yarn
-      - run:
-          name: Run tests
-          command: yarn test:ci
+          name: Current build id
+          command: echo $CIRCLE_BUILD_URL
+#      - run:
+#          name: Upgrade Yarn
+#          command: sudo npm i -g yarn@$(node -p 'require("./package.json").engines.yarn')
+#      - restore_cache:
+#          name: Restore Yarn cache
+#          keys:
+#            - yarn-packages-{{ checksum "yarn.lock" }}
+#      - run:
+#          name: Install Dependencies
+#          command: yarn
+#      - save_cache:
+#          name: Save Yarn Package cache
+#          key: yarn-packages-{{ checksum "yarn.lock" }}
+#          paths:
+#            - ~/.cache/yarn
+#      - run:
+#          name: Run tests
+#          command: yarn test:ci
       # - setup_remote_docker
       # - run:
       #     name: Deploy all connectors
