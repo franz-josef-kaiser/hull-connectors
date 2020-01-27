@@ -248,5 +248,4 @@ const glue = {
     ])
 };
 //test
-//test2
 module.exports = glue;
