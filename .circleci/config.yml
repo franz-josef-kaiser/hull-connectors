@@ -45,14 +45,19 @@ jobs:
             connectors=""
             for fn in packages/connectors/*/; do
                 current_connector=${fn:25:(-1)}
-                if [ -z `git diff $LAST_SUCCESSFUL_COMMIT $CIRCLE_SHA1 $fn 2>&1` ]; then
+                changes=`git diff $LAST_SUCCESSFUL_COMMIT $CIRCLE_SHA1 $fn 2>&1`
+                if [ -z "$changes" ]
+                then
                   echo "no changes for $current_connector"
                 else
-                  echo "changes detected for $current_connector"
+                  echo "changes for connector $current_connector"
                   connectors+="$current_connector\|"
                 fi
             done
-            connectors+="zapier\|"
+            if [ -z $connectors ]
+            then
+              connectors="zapier\|"
+            fi
             echo "export CONNECTORS_TO_BUILD=${connectors}" >> $BASH_ENV
       - setup_remote_docker
       # This part will try to build connectors based on the list defined in the previous step
