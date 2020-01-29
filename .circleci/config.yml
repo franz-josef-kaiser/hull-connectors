@@ -7,18 +7,6 @@ jobs:
 #      - image: circleci/redis:5.0.4
     steps:
       - checkout
-      - run:
-          name: Last successfull commit
-          command: |
-            LAST_SUCCESSFUL_COMMIT=$(curl -Ss -u "$CIRCLE_TOKEN:" "https://circleci.com/api/v1.1/project/github/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME?filter=completed&limit=1" | jq -r '.[0]["vcs_revision"]')
-            echo "comparing commits $LAST_SUCCESSFUL_COMMIT and $CIRCLE_SHA1"
-            for fn in `cat connectors.txt`; do
-                if [ -z `git diff $LAST_SUCCESSFUL_COMMIT $CIRCLE_SHA1 $fn 2>&1`]; then
-                  echo "no changes for $fn"
-                else
-                  echo "changes detected for $fn"
-                fi
-            done
 #      - run:
 #          name: Upgrade Yarn
 #          command: sudo npm i -g yarn@$(node -p 'require("./package.json").engines.yarn')
@@ -37,6 +25,57 @@ jobs:
 #      - run:
 #          name: Run tests
 #          command: yarn test:ci
+      # Don't try building connectors if not in branch master or develop
+      - run:
+          name: Check branch
+          command: |
+            if [ "$CIRCLE_BRANCH" != "develop" ] && [ "$CIRCLE_BRANCH" != "master" ] && [ "$CIRCLE_BRANCH" != "feature/circleci-docker" ]; then
+              circleci-agent step halt
+              echo "Skipping build, current branch not master or develop"
+            fi
+      # This part will do the following:
+      # 1. Look for the last successful build
+      # 2. Parse through the folders found in packages/connectors
+      # 3. If the git diff command finds changes in a one of these folders, add it to a list
+      - run:
+          name: Find changes in connectors
+          command: |
+            LAST_SUCCESSFUL_COMMIT=$(curl -Ss -u "$CIRCLE_TOKEN:" "https://circleci.com/api/v1.1/project/github/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME?filter=completed&limit=1" | jq -r '.[0]["vcs_revision"]')
+            echo "comparing between commit $LAST_SUCCESSFUL_COMMIT and commit $CIRCLE_SHA1"
+            connectors=""
+            for fn in packages/connectors/*/; do
+                current_connector=${fn:25:(-1)}
+                if [ -z `git diff $LAST_SUCCESSFUL_COMMIT $CIRCLE_SHA1 $fn 2>&1` ]; then
+                  echo "no changes for $current_connector"
+                else
+                  echo "changes detected for $current_connector"
+                  connectors+="$current_connector\|"
+                fi
+            done
+            connectors+="zapier\|"
+            echo "export CONNECTORS_TO_BUILD=${connectors}" >> $BASH_ENV
+      - setup_remote_docker
+      # This part will try to build connectors based on the list defined in the previous step
+      # If the list is empty, changes are on another level, then build everything
+      - run:
+          name: Build connectors
+          command: |
+            if [ -z "$CONNECTORS_TO_BUILD" ]; then
+              echo "No changes detected in connectors, rebuilding all connectors"
+              for fn in packages/connectors/*/; do
+                current_connector=${fn:25:(-1)}
+                echo "triggering build for connector: $current_connector"
+                docker build --build-arg CONNECTOR=hull-$current_connector -t hull/hull-connectors:$current_connector .
+              done
+            else
+              IFS='|' read -r -a array <<< "${CONNECTORS_TO_BUILD::(-1)}"
+              for c in "${array[@]}"; do
+                echo "Triggering build for connector: $c"
+                docker build --build-arg CONNECTOR=hull-$c -t hull/hull-connectors:$c .
+              done
+            fi
+#            echo "Hello"
+#            echo "building connector"
       # - setup_remote_docker
       # - run:
       #     name: Deploy all connectors
