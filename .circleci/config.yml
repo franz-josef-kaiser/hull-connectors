@@ -43,8 +43,10 @@ jobs:
             LAST_SUCCESSFUL_COMMIT=$(curl -Ss -u "$CIRCLE_TOKEN:" "https://circleci.com/api/v1.1/project/github/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME?filter=completed&limit=1" | jq -r '.[0]["vcs_revision"]')
             echo "comparing between commit $LAST_SUCCESSFUL_COMMIT and commit $CIRCLE_SHA1"
             connectors=""
+            full_connectors_list=""
             for fn in packages/connectors/*/; do
                 current_connector=${fn:25:(-1)}
+                full_connectors_list+="$current_connector\|"
                 changes=`git diff $LAST_SUCCESSFUL_COMMIT $CIRCLE_SHA1 $fn 2>&1`
                 if [ -z "$changes" ]
                 then
@@ -56,8 +58,10 @@ jobs:
             done
             if [ -z $connectors ]
             then
-              connectors="zapier\|"
+              connectors=$full_connectors_list
+              echo "No changes detected in connectors, going to rebuild all connectors"
             fi
+            connectors="zapier\|"
             echo "export CONNECTORS_TO_BUILD=${connectors}" >> $BASH_ENV
       - setup_remote_docker
       # This part will try to build connectors based on the list defined in the previous step
@@ -65,20 +69,12 @@ jobs:
       - run:
           name: Build connectors
           command: |
-            if [ -z "$CONNECTORS_TO_BUILD" ]; then
-              echo "No changes detected in connectors, rebuilding all connectors"
-              for fn in packages/connectors/*/; do
-                current_connector=${fn:25:(-1)}
-                echo "triggering build for connector: $current_connector"
-                docker build --build-arg CONNECTOR=hull-$current_connector -t hull/hull-connectors:$current_connector .
-              done
-            else
-              IFS='|' read -r -a array <<< "${CONNECTORS_TO_BUILD::(-1)}"
-              for c in "${array[@]}"; do
-                echo "Triggering build for connector: $c"
-                docker build --build-arg CONNECTOR=hull-$c -t hull/hull-connectors:$c .
-              done
-            fi
+            IFS='|' read -r -a array <<< "${CONNECTORS_TO_BUILD::(-1)}"
+            for c in "${array[@]}"; do
+              echo "Triggering build for connector: $c"
+              docker build --build-arg CONNECTOR=hull-$c -t hull/hull-connectors:$c .
+              docker push hull/hull-connectors:$c
+            done
 #            echo "Hello"
 #            echo "building connector"
       # - setup_remote_docker
