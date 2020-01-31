@@ -40,7 +40,7 @@ jobs:
       - run:
           name: Find changes in connectors
           command: |
-            LAST_SUCCESSFUL_COMMIT=$(curl -Ss -u "$CIRCLE_TOKEN:" "https://circleci.com/api/v1.1/project/github/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME?filter=completed&limit=1" | jq -r '.[0]["vcs_revision"]')
+            LAST_SUCCESSFUL_COMMIT=$(`python3 ${CIRCLE_BRANCH} ${CIRCLE_TOKEN}`)
             echo "comparing between commit $LAST_SUCCESSFUL_COMMIT and commit $CIRCLE_SHA1"
             connectors=""
             full_connectors_list=""
