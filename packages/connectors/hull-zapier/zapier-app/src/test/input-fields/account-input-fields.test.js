@@ -9,7 +9,7 @@ process.env.TOKEN = "YOUR_TOKEN";
 const App = require('../../index');
 const appTester = zapier.createAppTester(App);
 
-describe('Input Fields Test', () => {
+describe('Account Input Fields Test', () => {
   zapier.tools.env.inject();
   const connector_url = process.env.CONNECTOR_URL;
 
@@ -44,7 +44,7 @@ describe('Input Fields Test', () => {
       "list": true,
       "choices": [
         {
-          "value": "all_account_segments",
+          "value": "all_segments",
           "label": "All Account Segments"
         },
         {
@@ -90,7 +90,7 @@ describe('Input Fields Test', () => {
       "list": true,
       "choices": [
         {
-          "value": "all_account_segments",
+          "value": "all_segments",
           "label": "All Account Segments"
         },
         {
@@ -136,7 +136,7 @@ describe('Input Fields Test', () => {
       "list": true,
       "choices": [
         {
-          "value": "all_account_segments",
+          "value": "all_segments",
           "label": "All Account Segments"
         },
         {
@@ -172,7 +172,7 @@ describe('Input Fields Test', () => {
     // Account Schema
     scope.post("/schema?token=YOUR_TOKEN")
       .reply(200, [
-        { "label": "domain", "value": "domain" }
+        { "name": "account.domain" }
       ]);
 
     const results = await appTester(
@@ -192,7 +192,7 @@ describe('Input Fields Test', () => {
           "list": true,
           "choices": [
             {
-              "value": "all_account_segments",
+              "value": "all_segments",
               "label": "All Account Segments"
             },
             {

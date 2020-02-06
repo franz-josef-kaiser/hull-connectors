@@ -1,18 +1,32 @@
 /* @flow */
 import type { ServiceTransforms } from "hull-connector-framework/src/purplefusion/types";
 
-const { doesNotContain, isEqual, doesContain, isNotEqual, isServiceAttribute, mappingExists } = require("hull-connector-framework/src/purplefusion/conditionals");
+const {
+  doesNotContain,
+  isEqual,
+  mappingExists,
+  notNull,
+  isNull,
+  not,
+  resolveIndexOf,
+  inputIsEqual
+} = require("hull-connector-framework/src/purplefusion/conditionals");
 
 
 const {
   HullIncomingUser,
   HullIncomingAccount,
   WebPayload,
+  ServiceUserRaw
 } = require("hull-connector-framework/src/purplefusion/hull-service-objects");
+
+const { isUndefinedOrNull } = require("hull-connector-framework/src/purplefusion/utils");
 
 const {
   OutreachProspectRead,
   OutreachAccountRead,
+  OutreachEventRead,
+  OutreachWebEventRead
 } = require("./service-objects");
 
 /**
@@ -118,6 +132,41 @@ const transformsToHull: ServiceTransforms =
       ]
     },
     {
+      input: OutreachWebEventRead,
+      output: ServiceUserRaw,
+      direction: "incoming",
+      strategy: "MixedTransforms",
+      transforms: [
+        {
+          strategy: "AtomicReaction",
+          target: { component: "input" },
+          operateOn: { component: "input", select: "data.relationships.stage.id", name: "stageId" },
+          then: [
+            {
+              operateOn: { component: "glue", route: "getStageIdMap", select: "${stageId}" },
+              writeTo: { path: "changed_to" }
+            },
+          ]
+        },
+        {
+          strategy: "PropertyKeyedValue",
+          arrayStrategy: "append_index",
+          transforms: [
+            { inputPath: "data.id", outputPath: "id"},
+            { inputPath: "changed_to", outputPath: "hull_events[0].properties.changed_to"},
+            {
+              outputPath: "hull_events[0].eventName",
+              outputFormat: "Prospect Stage Changed"
+            },
+            {
+              inputPath: "data.attributes.updatedAt",
+              outputPath: "hull_events[0].context.created_at"
+            }
+          ]
+        }
+      ]
+    },
+    {
       input: WebPayload,
       output: HullIncomingUser,
       strategy: "MixedTransforms",
@@ -126,7 +175,10 @@ const transformsToHull: ServiceTransforms =
         {
           strategy: "AtomicReaction",
           target: { component: "cloneInitialInput" },
-          condition: mappingExists("incoming_user_attributes", { service: "stageName" }),
+          condition: [
+            mappingExists("incoming_user_attributes", { service: "stageName" }),
+            not(inputIsEqual("data.relationships.stage.id", undefined))
+          ],
           operateOn: { component: "input", select: "data.relationships.stage.id", name: "stageId" },
           then: [
             {
@@ -152,7 +204,10 @@ const transformsToHull: ServiceTransforms =
         {
           strategy: "AtomicReaction",
           target: { component: "cloneInitialInput" },
-          condition: mappingExists("incoming_user_attributes", { service: "ownerEmail" }),
+          condition: [
+            mappingExists("incoming_user_attributes", { service: "ownerEmail" }),
+            not(inputIsEqual("data.relationships.owner.id", undefined))
+          ],
           operateOn: { component: "input", select: "data.relationships.owner.id", name: "ownerId" },
           then: [
             {
@@ -360,8 +415,136 @@ const transformsToHull: ServiceTransforms =
           ]
         }
       ]
+    },
+    {
+      input: OutreachEventRead,
+      output: ServiceUserRaw,
+      strategy: "MixedTransforms",
+      transforms: [
+        {
+          strategy: "AtomicReaction",
+          target: { component: "input", name: "eventInput" },
+          validation:
+            {
+              error: "BreakProcess",
+              message: "Event has never been seen before by the connector, please report issue to your Hull Support representative",
+              condition:
+                doesNotContain(require("./events.json"), "eventInput.attributes.name")
+            }
+        },
+        {
+          strategy: "AtomicReaction",
+          target: { component: "input", name: "eventInput" },
+          validation:
+            {
+              error: "BreakToLoop",
+              message: "Event has not been whitelisted by the connector settings, please see the \"Events To Fetch\" in the settings to add this event type",
+              condition:
+                not(resolveIndexOf("connector.private_settings.events_to_fetch", "eventInput.attributes.name"))
+            }
+        },
+        {
+          strategy: "AtomicReaction",
+          target: { component: "input", name: "eventInput" },
+          validation:
+            {
+              error: "BreakToLoop",
+              message: "Event isn't related to a Prospect, skipping",
+              condition:
+                isNull("eventInput.relationships.prospect.data.id")
+            }
+        },
+        {
+          strategy: "Jsonata",
+          direction: "incoming",
+          transforms: [
+            {
+              expression:
+                "{\n" +
+                "\t\"id\": relationships.prospect.data.id,\n" +
+                "\t\"hull_events\": [\n" +
+                "\t\t{\n" +
+                "\t\t\t\"eventName\": attributes.name,\n" +
+                "\t\t\t\"properties\": {\n" +
+                "            \t\"body\": attributes.body,\n" +
+                "                \"created_at\": attributes.createdAt,\n" +
+                "                \"external_url\": attributes.externalUrl,\n" +
+                "                \"email_id\": attributes.mailingId,\n" +
+                "                \"payload\": attributes.payload,\n" +
+                "                \"request_city\": attributes.requestCity,\n" +
+                "                \"user_agent\": attributes.requestDevice,\n" +
+                "                \"ip\": attributes.requestHost,\n" +
+                "                \"request_proxied\": attributes.requestProxied,\n" +
+                "                \"request_region\": attributes.requestRegion\n" +
+                "            },\n" +
+                "\t\t\t\"context\": {\n" +
+                "\t\t\t\t\"event_id\": id,\n" +
+                "\t\t\t\t\"created_at\": attributes.eventAt\n" +
+                "\t\t\t}\n" +
+                "\t\t}\n" +
+                "\t]\n" +
+                "}"
+            }
+          ]
+        },
+        {
+          strategy: "AtomicReaction",
+          target: { component: "input", name: "eventInput" },
+          then: [
+            {
+              //target: { component: "input", select: "hullEvents[0]"},
+              condition: notNull("eventInput.hull_events[0].properties.email_id"),
+              operateOn: { component: "input", name: "mailingId", select: "hull_events[0].properties.email_id" },
+              then: [
+                {
+                  operateOn: { component: "glue", route: "getMailingDetails", name: "enrichedEmail" },
+                  // writeTo: { path: "hull_events[0].properties.email_subject", format: "${enrichedEmail.email_subject}" },
+                  then: [
+                    {
+                      writeTo: { path: "hull_events[0].properties.email_subject", format: "${enrichedEmail.email_subject}" }
+                    },
+                    {
+                      writeTo: { path: "hull_events[0].properties.sequence_id", format: "${enrichedEmail.sequence_id}" },
+                    },
+                    {
+                      // condition: notNull("${enrichedEmail.sequence_id}"),
+                      operateOn: { component: "glue", route: "getSequences", select: "${enrichedEmail.sequence_id}" },
+                      writeTo: { path: "hull_events[0].properties.sequence_name" }
+                    },
+                  ]
+                },
+              ]
+            },
+            {
+              operateOn: {
+                component: "static",
+                object: {
+                  "bounced_message": "Bounced Message",
+                  "emails_opt_out": "Emails Opt Out",
+                  "inbound_message": "Inbound Message",
+                  "message_clicked": "Message Clicked",
+                  "message_opened": "Message Opened",
+                  "message_opened_sender": "Message Opened Sender",
+                  "outbound_message": "Outbound Message"
+                },
+                select: "${eventInput.hull_events[0].eventName}",
+                name: "eventName"
+              },
+              then: [
+                {
+                  validation: { error: "BreakToLoop", condition: [
+                      isNull("eventName"),
+                    ]},
+                }
+              ],
+              writeTo: {
+                path: "hull_events[0].eventName"
+              }
+            }
+          ]
+        },
+      ]
     }
-
   ];
 
 module.exports = transformsToHull;

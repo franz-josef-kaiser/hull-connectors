@@ -12,7 +12,7 @@ module.exports = {
       "synchronized_user_segments": [],
       "synchronized_account_segments": [],
       "synchronized_events": [],
-      "subscriptions": []
+      "triggers": []
     },
   },
   "route": "schema",
@@ -76,6 +76,6 @@ module.exports = {
       ]
     }
   ],
-  "result": {"data": [{"label": "Email Opened", "value": "Email Opened"}, {"label": "Email Sent", "value": "Email Sent"}, {"label": "Email Dropped", "value": "Email Dropped"}], "status": 200}
+  "result": {"data": [{"name": "user_event.Email Opened"}, {"name": "user_event.Email Sent"}, {"name": "user_event.Email Dropped"}], "status": 200}
 };
 

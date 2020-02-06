@@ -70,6 +70,36 @@ describe('Trigger - account_left', () => {
     should.equal(results[0].message_id, "message_1");
   });
 
+  it('Account did not leave a segment. All segments left pass through - do not send message to Zapier', async () => {
+    const message1 = _.cloneDeep(accountLeftSegmentPayload);
+    _.set(message1, "changes.account_segments", {});
+
+    const bundle = {
+      authData: {
+        token: process.env.TOKEN,
+        oauth_consumer_key: process.env.OAUTH_CONSUMER_KEY,
+        oauth_consumer_secret: process.env.OAUTH_CONSUMER_SECRET,
+        oauth_token: process.env.OAUTH_TOKEN,
+        oauth_token_secret: process.env.OAUTH_TOKEN_SECRET
+      },
+
+      inputData: {
+        account_segments: ["all_segments"]
+      },
+
+      cleanedRequest: [
+        message1
+      ]
+    };
+
+    const results = await appTester(
+      App.triggers['account_entered_segment'].operation.perform,
+      bundle
+    );
+    results.should.be.an.Array();
+    results.should.have.lengthOf(0);
+  });
+
   it('Account left a segment. All segments left pass through - single message sent to Zapier', async () => {
     const message1 = _.cloneDeep(accountLeftSegmentPayload);
 
@@ -83,7 +113,7 @@ describe('Trigger - account_left', () => {
       },
 
       inputData: {
-        account_segments: ["all_account_segments"]
+        account_segments: ["all_segments"]
       },
 
       cleanedRequest: [

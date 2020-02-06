@@ -9,7 +9,7 @@ process.env.TOKEN = "YOUR_TOKEN";
 const App = require('../../index');
 const appTester = zapier.createAppTester(App);
 
-describe('Input Fields Test', () => {
+describe('User Input Fields Test', () => {
   zapier.tools.env.inject();
   const connector_url = process.env.CONNECTOR_URL;
 
@@ -44,7 +44,7 @@ describe('Input Fields Test', () => {
       "list": true,
       "choices": [
         {
-          "value": "all_user_segments",
+          "value": "all_segments",
           "label": "All User Segments"
         },
         {
@@ -91,7 +91,7 @@ describe('Input Fields Test', () => {
       "list": true,
       "choices": [
         {
-          "value": "all_user_segments",
+          "value": "all_segments",
           "label": "All User Segments"
         },
         {
@@ -138,7 +138,7 @@ describe('Input Fields Test', () => {
       "list": true,
       "choices": [
         {
-          "value": "all_user_segments",
+          "value": "all_segments",
           "label": "All User Segments"
         },
         {
@@ -181,17 +181,14 @@ describe('Input Fields Test', () => {
     // User Schema
     scope.post("/schema?token=YOUR_TOKEN")
       .reply(200, [
-        // TODO remove "account." traits from user
-        { "label": "account.domain", "value": "account.domain" },
-        { "label": "account.salesforce/industry", "value": "account.salesforce/industry" },
-        { "label": "email", "value": "email" },
-        { "label": "salesforce_contact/department", "value": "salesforce_contact/department" }
+        { "name": "user.email" },
+        { "name": "user.salesforce_contact/department" }
       ]);
 
     // Account Schema
     scope.post("/schema?token=YOUR_TOKEN")
       .reply(200, [
-        { "label": "domain", "value": "domain" }
+        { "name": "account.domain" }
       ]);
 
     const results = await appTester(
@@ -211,7 +208,7 @@ describe('Input Fields Test', () => {
           "list": true,
           "choices": [
             {
-              "value": "all_user_segments",
+              "value": "all_segments",
               "label": "All User Segments"
             },
             {
@@ -231,14 +228,6 @@ describe('Input Fields Test', () => {
           "list": true,
           "choices": [
             {
-              "label": "account.domain",
-              "value": "account.domain"
-            },
-            {
-              "label": "account.salesforce/industry",
-              "value": "account.salesforce/industry"
-            },
-            {
               "label": "email",
               "value": "email"
             },
@@ -255,7 +244,7 @@ describe('Input Fields Test', () => {
           "list": true,
           "choices": [
             {
-              "value": "all_account_segments",
+              "value": "all_segments",
               "label": "All Account Segments"
             },
             {
@@ -312,9 +301,9 @@ describe('Input Fields Test', () => {
     // User Events
     scope.post("/schema?token=YOUR_TOKEN")
       .reply(200, [
-        {"label": "Email Opened", "value": "Email Opened"},
-        {"label": "Email Sent", "value": "Email Sent"},
-        {"label": "Email Dropped", "value": "Email Dropped"}
+        {"name": "user_event.Email Opened"},
+        {"name": "user_event.Email Sent"},
+        {"name": "user_event.Email Dropped"}
       ]);
 
     const results = await appTester(
@@ -327,7 +316,7 @@ describe('Input Fields Test', () => {
 
     results.should.deepEqual([
       {
-        "key": "user_event",
+        "key": "user_events",
         "required": true,
         "label": "User Events",
         "list": true,
@@ -353,7 +342,7 @@ describe('Input Fields Test', () => {
         "list": true,
         "choices": [
           {
-            "value": "all_user_segments",
+            "value": "all_segments",
             "label": "All User Segments"
           },
           {
@@ -373,7 +362,7 @@ describe('Input Fields Test', () => {
         "list": true,
         "choices": [
           {
-            "value": "all_account_segments",
+            "value": "all_segments",
             "label": "All Account Segments"
           },
           {

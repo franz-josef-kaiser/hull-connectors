@@ -12,7 +12,7 @@ module.exports = {
       "synchronized_user_segments": [],
       "synchronized_account_segments": [],
       "synchronized_events": [],
-      "subscriptions": []
+      "triggers": []
     },
   },
   "route": "schema",
@@ -73,8 +73,8 @@ module.exports = {
   ],
   "result": {
     "data": [
-      {"label": "email", "value": "email"},
-      {"label": "salesforce_contact/department", "value": "salesforce_contact/department"}
+      {"name": "user.email"},
+      {"name": "user.salesforce_contact/department"}
     ],
     "status": 200}
 };

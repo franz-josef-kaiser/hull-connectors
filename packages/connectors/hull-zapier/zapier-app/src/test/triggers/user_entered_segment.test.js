@@ -45,6 +45,34 @@ const userEnteredSegmentPayload = {
 describe('Trigger - user_entered', () => {
   zapier.tools.env.inject();
 
+  it('User did not enter segment - do not send to Zapier', async () => {
+    const message1 = _.cloneDeep(userEnteredSegmentPayload);
+    _.set(message1, "changes.segments.entered", []);
+
+    const bundle = {
+      authData: {
+        token: process.env.TOKEN,
+        oauth_consumer_key: process.env.OAUTH_CONSUMER_KEY,
+        oauth_consumer_secret: process.env.OAUTH_CONSUMER_SECRET,
+        oauth_token: process.env.OAUTH_TOKEN,
+        oauth_token_secret: process.env.OAUTH_TOKEN_SECRET
+      },
+
+      inputData: {
+        user_segments: ["all_segments"]
+      },
+
+      cleanedRequest: message1
+    };
+
+    const results = await appTester(
+      App.triggers['user_entered_segment'].operation.perform,
+      bundle
+    );
+    results.should.be.an.Array();
+    results.should.have.lengthOf(0);
+  });
+
   it('User entered defined segment - single message sent to Zapier', async () => {
     const message1 = _.cloneDeep(userEnteredSegmentPayload);
 
@@ -90,7 +118,7 @@ describe('Trigger - user_entered', () => {
       },
 
       inputData: {
-        user_segments: ["all_user_segments"]
+        user_segments: ["all_segments"]
       },
 
       cleanedRequest: [
@@ -118,6 +146,13 @@ describe('Trigger - user_entered', () => {
     const message4 = _.cloneDeep(userEnteredSegmentPayload);
     const message5 = _.cloneDeep(userEnteredSegmentPayload);
 
+    _.set(message1, "changes.segments.entered", [
+      {
+        "id": "user_segment_1",
+        "name": "UserSegment1"
+      }
+    ]);
+
     _.set(message2, "message_id", "message_2");
     _.set(message2, "changes.segments.entered", [
       {
@@ -135,12 +170,10 @@ describe('Trigger - user_entered', () => {
     ]);
 
     _.set(message4, "message_id", "message_4");
-    _.set(message4, "changes", {});
+    _.set(message4, "changes.segments", {});
 
     _.set(message5, "message_id", "message_5");
-    _.set(message5, "changes.segments.entered", [
-      {}
-    ]);
+    _.set(message5, "changes.segments.entered", []);
 
     const bundle = {
       authData: {

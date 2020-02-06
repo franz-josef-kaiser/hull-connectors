@@ -2,11 +2,10 @@
   "name": "Clearbit",
   "description": "Synchronize Data with Clearbit!",
   "tags": [
-    "incoming",
-    "outgoing",
     "batch",
-    "oneColumn",
-    "smart-notifier"
+    "batch-accounts",
+    "smart-notifier",
+    "kraken-exports"
   ],
   "mappings": {
     "person": {
@@ -33,23 +32,8 @@
             "overwrite": false
           },
           {
-            "service": "bio",
-            "hull": "bio",
-            "overwrite": false
-          },
-          {
-            "service": "geo.city",
-            "hull": "address.city",
-            "overwrite": false
-          },
-          {
-            "service": "geo.country",
-            "hull": "address.country",
-            "overwrite": false
-          },
-          {
-            "service": "geo.state",
-            "hull": "address.state",
+            "service": "{ 'city': geo.city, 'country': geo.country, 'state': geo.state }",
+            "hull": "address",
             "overwrite": false
           }
         ],
@@ -760,7 +744,7 @@
   ],
   "source": "clearbit",
   "readme": "readme.md",
-  "version": "0.0.20-monorepo",
+  "version": "0.1.15-monorepo",
   "settings": [],
   "private_settings": [
     {
@@ -1587,7 +1571,7 @@
           "ALL": "All Accounts"
         }
       },
-      "format": "segment"
+      "format": "accountSegment"
     },
     {
       "name": "prospect_account_segments_exclusion",
@@ -1595,7 +1579,7 @@
       "description": "Accounts in those segments will be excluded from Prospector. Takes precedence over the whitelist",
       "type": "array",
       "default": [],
-      "format": "segment"
+      "format": "accountSegment"
     },
     {
       "name": "prospect_limit_count",
@@ -1735,7 +1719,8 @@
         "channels": {
           "only": [
             "user:update",
-            "account:update"
+            "account:update",
+            "ship:update"
           ]
         }
       },
@@ -1760,7 +1745,10 @@
   "json": [
     {
       "url": "/prospect",
-      "handler": "prospectHandler"
+      "handler": "prospectHandler",
+      "options": {
+        "respondWithError": true
+      }
     },
     {
       "url": "/schema/company_properties",

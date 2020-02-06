@@ -51,6 +51,36 @@ const userEventCreatedPayload = {
 describe('Trigger - user_event_created', () => {
   zapier.tools.env.inject();
 
+  it('No events to send', async () => {
+    const message1 = _.cloneDeep(userEventCreatedPayload);
+    message1.events = [];
+
+    const bundle = {
+      authData: {
+        token: process.env.TOKEN,
+        oauth_consumer_key: process.env.OAUTH_CONSUMER_KEY,
+        oauth_consumer_secret: process.env.OAUTH_CONSUMER_SECRET,
+        oauth_token: process.env.OAUTH_TOKEN,
+        oauth_token_secret: process.env.OAUTH_TOKEN_SECRET
+      },
+
+      inputData: {
+        user_segments: ["user_segment_1"],
+        account_segments: ["all_segments"],
+        user_events: ["Email Sent", "Email Opened"]
+      },
+
+      cleanedRequest: message1
+    };
+
+    const results = await appTester(
+      App.triggers['user_event_created'].operation.perform,
+      bundle
+    );
+    results.should.be.an.Array();
+    results.should.have.lengthOf(0);
+  });
+
   it('Whitelisted user event created and user belongs to whitelisted segment - single message sent to Zapier', async () => {
     const message1 = _.cloneDeep(userEventCreatedPayload);
 
@@ -65,7 +95,7 @@ describe('Trigger - user_event_created', () => {
 
       inputData: {
         user_segments: ["user_segment_1"],
-        account_segments: ["all_account_segments"],
+        account_segments: ["all_segments"],
         user_events: ["Email Sent", "Email Opened"]
       },
 
@@ -99,7 +129,7 @@ describe('Trigger - user_event_created', () => {
 
       inputData: {
         user_segments: ["user_segment_1"],
-        account_segments: ["all_account_segments"],
+        account_segments: ["all_segments"],
         user_events: ["Email Sent", "Email Dropped"]
       },
 
@@ -130,7 +160,7 @@ describe('Trigger - user_event_created', () => {
 
       inputData: {
         user_segments: ["random_segment_id_1"],
-        account_segments: ["all_account_segments"],
+        account_segments: ["all_segments"],
         user_events: ["Email Sent", "Email Opened"]
       },
 
@@ -172,7 +202,7 @@ describe('Trigger - user_event_created', () => {
 
       inputData: {
         user_segments: ["user_segment_1"],
-        account_segments: ["all_account_segments"],
+        account_segments: ["all_segments"],
         user_events: ["Email Sent", "Email Opened"]
       },
 

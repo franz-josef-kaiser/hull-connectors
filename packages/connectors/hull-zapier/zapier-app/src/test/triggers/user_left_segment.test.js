@@ -83,7 +83,7 @@ describe('Trigger - user_left', () => {
       },
 
       inputData: {
-        user_segments: ["all_user_segments"]
+        user_segments: ["all_segments"]
       },
 
       cleanedRequest: [
@@ -165,9 +165,7 @@ describe('Trigger - user_left', () => {
     _.set(message4, "changes", {});
 
     _.set(message5, "message_id", "message_5");
-    _.set(message5, "changes.segments.left", [
-      {}
-    ]);
+    _.set(message5, "changes.segments", {});
 
     const bundle = {
       authData: {

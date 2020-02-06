@@ -61,7 +61,7 @@ describe('Trigger - user_attribute_updated', () => {
 
       inputData: {
         user_segments: ["user_segment_1"],
-        account_segments: ["all_account_segments"],
+        account_segments: ["all_segments"],
         user_attributes: ["name", "pipedrive/department"]
       },
 
@@ -97,7 +97,7 @@ describe('Trigger - user_attribute_updated', () => {
 
       inputData: {
         user_segments: ["random_segment_id"],
-        account_segments: ["all_account_segments"],
+        account_segments: ["all_segments"],
         user_attributes: ["name", "pipedrive/department"]
       },
 
@@ -126,7 +126,7 @@ describe('Trigger - user_attribute_updated', () => {
 
       inputData: {
         user_segments: ["user_segment_1"],
-        account_segments: ["all_account_segments"],
+        account_segments: ["all_segments"],
         user_attributes: ["first_name", "pipedrive/email"]
       },
 
@@ -170,7 +170,7 @@ describe('Trigger - user_attribute_updated', () => {
 
       inputData: {
         user_segments: ["user_segment_1"],
-        account_segments: ["all_account_segments"],
+        account_segments: ["all_segments"],
         user_attributes: ["name", "pipedrive/department"]
       },
 
@@ -212,7 +212,7 @@ describe('Trigger - user_attribute_updated', () => {
 
       inputData: {
         user_segments: ["user_segment_1"],
-        account_segments: ["all_account_segments"],
+        account_segments: ["all_segments"],
         user_attributes: ["name", "pipedrive/department"],
         account_attributes: ["domain"]
       },
@@ -284,8 +284,8 @@ describe('Trigger - user_attribute_updated', () => {
       },
 
       inputData: {
-        user_segments: ["user_segment_1"],
-        account_segments: ["account_segment_1"],
+        user_segments: ["all_segments"],
+        account_segments: ["all_segments"],
         account_attributes: ["domain"]
       },
 
@@ -352,7 +352,7 @@ describe('Trigger - user_attribute_updated', () => {
 
       inputData: {
         user_segments: ["user_segment_1"],
-        account_segments: ["all_account_segments"]
+        account_segments: ["all_segments"]
       },
 
       cleanedRequest: message1

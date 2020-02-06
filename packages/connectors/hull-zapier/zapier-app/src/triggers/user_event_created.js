@@ -1,15 +1,25 @@
 const sample = require("../../samples/user-event-created");
 const { triggerBuilder } = require("../lib");
-const { getUserEventSchema } = require("../lib/input-fields");
-const { performEventCreatedTrigger } = require("../lib/perform-trigger");
+const { getUserEventInputFields } = require("../lib/input-fields");
+const { getUserAttributeOutputFields } = require("../lib/output-fields");
+const { performTrigger } = require("../lib/perform-trigger");
+const { validateEvents, validateSegments } = require("../lib/validate");
+
+const validations = {
+  events: validateEvents,
+  segments: validateSegments("user"),
+  account_segments: validateSegments("account")
+};
 
 const user_event_created = triggerBuilder({
-  getInputFields: getUserEventSchema,
-  performTrigger: performEventCreatedTrigger,
+  getInputFields: getUserEventInputFields,
+  getOutputFields: getUserAttributeOutputFields,
+  performTrigger: performTrigger(validations),
   sample,
   description: "Triggers when a user event is created.",
   entityType: "user_event",
-  action: "created"
+  action: "created",
+  hidden: false
 });
 
 module.exports = {

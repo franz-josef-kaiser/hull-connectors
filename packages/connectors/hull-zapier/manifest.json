@@ -5,31 +5,22 @@
     "batch",
     "batch-accounts",
     "smart-notifier",
-    "kraken-exports"
+    "kraken-exports",
+    "first-install"
   ],
   "logo": "logo.png",
   "picture": "picture.png",
   "ui": false,
   "readme": "readme.md",
-  "version": "0.1.8-monorepo",
+  "version": "0.1.15-monorepo",
   "private_settings": [
     {
-      "name": "subscriptions",
+      "name": "triggers",
       "title": "Rest Hook Subscriptions",
       "type": "array",
       "items": {
         "type": "object",
-        "properties": {
-          "url": {
-            "type": "string"
-          },
-          "action": {
-            "type": "string"
-          },
-          "entityType": {
-            "type": "string"
-          }
-        }
+        "properties": {}
       },
       "default": []
     },
@@ -46,6 +37,11 @@
       "type": "boolean",
       "default": true,
       "format": "hidden"
+    },
+    {
+      "name": "invitation",
+      "default": "https://zapier.com/apps/hull/integrations",
+      "type": "string"
     },
     {
       "name": "synchronized_user_segments",
@@ -81,8 +77,15 @@
   "resources": [],
   "settings_sections": [
     {
+      "title": "Connect to Zapier",
+      "description": "Please follow the link to begin using our Zapier integration",
+      "properties": [
+        "private_settings.invitation"
+      ]
+    },
+    {
       "title": "Credentials",
-      "description": "Copy this token and paste it when in the Zapier authentication window",
+      "description": "Copy this token and paste it in the Zapier authentication window",
       "step": "credentials",
       "properties": [
         "json.credentials"
@@ -164,8 +167,8 @@
           ]
         },
         "segments": {
-          "user:update": "private_settings.synchronized_user_segments",
-          "account:update": "private_settings.synchronized_account_segments"
+          "user:update": ["private_settings.synchronized_user_segments"],
+          "account:update": ["private_settings.synchronized_account_segments"]
         }
       },
       "channels": [

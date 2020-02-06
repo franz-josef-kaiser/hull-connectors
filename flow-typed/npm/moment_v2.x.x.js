@@ -1,5 +1,4 @@
-// flow-typed signature: 62491fb5f1b8d0ce28db6ce91c8599c6
-// flow-typed version: e56c0337dc/moment_v2.x.x/flow_>=v0.25.x <=v0.103.x
+// @flow
 
 type moment$MomentOptions = {
   y?: number | string,
@@ -23,7 +22,8 @@ type moment$MomentOptions = {
   seconds?: number | string,
   ms?: number | string,
   millisecond?: number | string,
-  milliseconds?: number | string
+  milliseconds?: number | string,
+  ...
 };
 
 type moment$MomentObject = {
@@ -33,17 +33,20 @@ type moment$MomentObject = {
   hours: number,
   minutes: number,
   seconds: number,
-  milliseconds: number
+  milliseconds: number,
+  ...
 };
 
 type moment$MomentCreationData = {
   input: string,
   format: string,
-  locale: {},
+  locale: { ... },
   isUTC: boolean,
-  strict: boolean
+  strict: boolean,
+  ...
 };
 
+// eslint-disable-next-line no-use-before-define
 type moment$CalendarFormat = string | ((moment: moment$Moment) => string);
 
 type moment$CalendarFormats = {
@@ -52,7 +55,8 @@ type moment$CalendarFormats = {
   nextWeek?: moment$CalendarFormat,
   lastDay?: moment$CalendarFormat,
   lastWeek?: moment$CalendarFormat,
-  sameElse?: moment$CalendarFormat
+  sameElse?: moment$CalendarFormat,
+  ...
 };
 
 type moment$Inclusivity = "()" | "[)" | "()" | "(]" | "[]";
@@ -111,8 +115,11 @@ declare class moment$MomentDuration {
   asMonths(): number;
   years(): number;
   asYears(): number;
-  add(value: number | moment$MomentDuration | {}, unit?: string): this;
-  subtract(value: number | moment$MomentDuration | {}, unit?: string): this;
+  add(value: number | moment$MomentDuration | { ... }, unit?: string): this;
+  subtract(
+    value: number | moment$MomentDuration | { ... },
+    unit?: string
+  ): this;
   as(unit: string): number;
   get(unit: string): number;
   toJSON(): string;
@@ -133,10 +140,10 @@ declare class moment$Moment {
       | null
       | void
       | []
-      | {}
+      | { ... }
   ): moment$Moment;
   static (array: []): moment$Moment;
-  static (object: {}): moment$Moment;
+  static (object: { ... }): moment$Moment;
   static (string: ?string, format: string | Array<string>): moment$Moment;
   static (
     string: ?string,
@@ -265,15 +272,19 @@ declare class moment$Moment {
   isoWeeksInYear(): number;
   get(string: string): number;
   set(unit: string, value: number): this;
-  set(options: { [unit: string]: number }): this;
+  set(options: { [unit: string]: number, ... }): this;
   static max(...dates: Array<moment$Moment>): moment$Moment;
   static max(dates: Array<moment$Moment>): moment$Moment;
   static min(...dates: Array<moment$Moment>): moment$Moment;
   static min(dates: Array<moment$Moment>): moment$Moment;
   add(
-    value: number | moment$MomentDuration | moment$Moment | {}, unit?: string): this;
+    value: number | moment$MomentDuration | moment$Moment | { ... },
+    unit?: string
+  ): this;
   subtract(
-    value: number | moment$MomentDuration | moment$Moment | string | {}, unit?: string): this;
+    value: number | moment$MomentDuration | moment$Moment | string | { ... },
+    unit?: string
+  ): this;
   startOf(unit: string): this;
   endOf(unit: string): this;
   local(): this;
@@ -341,11 +352,11 @@ declare class moment$Moment {
   clone(): moment$Moment;
   static isMoment(obj: any): boolean;
   static isDate(obj: any): boolean;
-  static updateLocale(locale: string, localeData?: ?{}): void;
-  static defineLocale(locale: string, localeData?: ?{}): void;
-  static locale(locale?: string, localeData?: {}): string;
+  static updateLocale(locale: string, localeData?: ?{ ... }): void;
+  static defineLocale(locale: string, localeData?: ?{ ... }): void;
+  static locale(locale?: string, localeData?: { ... }): string;
   static locale(locales: Array<string>): string;
-  locale(locale: string, customization?: {} | null): moment$Moment;
+  locale(locale: string, customization?: { ... } | null): moment$Moment;
   locale(): string;
   static months(): Array<string>;
   static monthsShort(): Array<string>;
@@ -361,7 +372,7 @@ declare class moment$Moment {
   static localeData(key?: string): moment$LocaleData;
   localeData(): moment$LocaleData;
   static duration(
-    value: number | {} | string,
+    value: number | { ... } | string,
     unit?: string
   ): moment$MomentDuration;
   static isDuration(obj: any): boolean;

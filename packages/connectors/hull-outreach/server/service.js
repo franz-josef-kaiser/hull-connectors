@@ -186,6 +186,39 @@ const service = ({ clientID, clientSecret } : {
       operation: "get",
       endpointType: "fetchAll"
     },
+    getEvents: {
+      url: "/events/",
+      operation: "get",
+      endpointType: "byProperty",
+      query: "page[limit]=1000"
+    },
+    getEventsPaged: {
+      url: "/events/",
+      operation: "get",
+      endpointType: "byProperty",
+      query: "page[limit]=${page_limit}&filter[id]=${id_offset}..inf"
+    },
+    getRecentEvents: {
+      url: "/events/",
+      operation: "get",
+      endpointType: "byProperty",
+      query: "filter[eventAt]=${filterLimits}&sort=-eventAt&page[limit]=1000"
+    },
+    getEventsOffset: {
+      url: "/events/",
+      operation: "get",
+      endpointType: "byProperty",
+      query: "${offsetQuery}"
+    },
+    getMailingDetails: {
+      url: "/mailings/${mailingId}/",
+      operation: "get"
+    },
+    getSequences: {
+      url: "/sequences/",
+      operation: "get",
+      returnObj: "body.data"
+    }
   },
   superagent: {
     settings: [
@@ -281,6 +314,11 @@ const service = ({ clientID, clientSecret } : {
         truthy: { status: 422 },
         errorType: SkippableError,
         message: MESSAGES.SERVICE_VALIDATION_ERROR
+      },
+      {
+        truthy: { status: 400 },
+        errorType: SkippableError,
+        message: MESSAGES.BAD_RESOURCE_REQUEST_ERROR
       }
     ]
 

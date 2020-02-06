@@ -1,15 +1,25 @@
 const sample = require( "../../samples/user-created");
 const { triggerBuilder } = require("../lib");
-const { performEntityCreatedTrigger } = require("../lib/perform-trigger");
-const { getUserSegments, getEmpty } = require("../lib/input-fields");
+const { getUserSegmentInputFields } = require("../lib/input-fields");
+const { getUserAttributeOutputFields } = require("../lib/output-fields");
+const { performTrigger } = require("../lib/perform-trigger");
+const { validateSegments, required } = require("../lib/validate");
+
+const validations = {
+  "changes": { is_new: true },
+  "user": required,
+  "segments": validateSegments("user")
+};
 
 const user_created = triggerBuilder({
-  getInputFields: getUserSegments,
-  performTrigger: performEntityCreatedTrigger,
+  getInputFields: getUserSegmentInputFields,
+  getOutputFields: getUserAttributeOutputFields,
+  performTrigger: performTrigger(validations),
   sample,
   description: "Triggers when a user is created.",
   entityType: "user",
-  action: "created"
+  action: "created",
+  hidden: false
 });
 
 module.exports = {
