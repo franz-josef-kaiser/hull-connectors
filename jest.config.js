@@ -1,7 +1,6 @@
 // jest.config.js
 module.exports = {
   testMatch: [
-    "<rootDir>/packages/connectors/hull-zapier/test/**/*.(test|spec).js",
     "<rootDir>/packages/connectors/hull-typeform/test/**/*.(test|spec).js",
     "<rootDir>/packages/connectors/hull-outreach/test/**/*.(test|spec).js",
     "<rootDir>/packages/connectors/hull-marketo/test/**/*.(test|spec).js",
@@ -13,7 +12,6 @@ module.exports = {
     "<rootDir>/packages/connectors/hull-zapier/test/**/*.(test|spec).js"
   ],
   collectCoverageFrom: [
-    "<rootDir>/packages/connectors/hull-zapier/server/**/*.js",
     "<rootDir>/packages/connectors/hull-typeform/server/**/*.js",
     "<rootDir>/packages/connectors/hull-pipedrive/server/**/*.js",
     "<rootDir>/packages/connectors/hull-zapier/server/**/*.js",
