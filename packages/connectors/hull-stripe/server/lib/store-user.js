@@ -14,8 +14,10 @@ export default async function storeUser(
   }
 ) {
   const { client } = ctx;
-  // $FlowFixMe
-  const attributes = getUserAttributes(customer);
-  const userClient = client.asUser(user);
-  return userClient.traits(attributes, { source: "stripe" });
+  return (
+    client
+      .asUser(user)
+      // $FlowFixMe
+      .traits(getUserAttributes(customer), { source: "stripe" })
+  );
 }

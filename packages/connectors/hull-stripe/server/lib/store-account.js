@@ -1,5 +1,5 @@
 // @flow
-import type { HullContext, HullAccountClaims } from "hull";
+import type { HullContext, HullUserClaims } from "hull";
 
 import getAccountAttributes from "./get-account-attributes";
 
@@ -9,13 +9,15 @@ export default async function storeAccount(
     user,
     customer
   }: {
-    user: HullAccountClaims,
+    user: HullUserClaims,
     customer: {}
   }
 ) {
   const { client } = ctx;
   // $FlowFixMe
   const attributes = getAccountAttributes(customer);
-  const accountClient = client.asUser(user).account();
-  return accountClient.traits(attributes, { source: "stripe" });
+  return client
+    .asUser(user)
+    .account()
+    .traits(attributes, { source: "stripe" });
 }

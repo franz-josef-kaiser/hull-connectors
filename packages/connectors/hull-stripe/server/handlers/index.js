@@ -3,15 +3,12 @@
 import type { HullHandlersConfiguration, Connector } from "hull";
 import { Strategy } from "passport-slack";
 import status from "./status";
-
 import fetchAllHandler from "./fetch-all";
-
 import onStatus from "./on-status";
 import onAuthorize from "./on-authorize";
-// import userUpdate from "./user-update";
-// import accountUpdate from "./account-update";
 import connectorUpdate from "./connector-update";
 import incomingHandler from "./incoming-handler";
+import supportedEvents from "./supported-events";
 
 const handler = ({
   clientID,
@@ -20,8 +17,6 @@ const handler = ({
   clientID: string,
   clientSecret: string
 }) => (_connector: Connector): HullHandlersConfiguration => {
-  // const { connectorConfig } = connector;
-
   return {
     statuses: { status },
     subscriptions: {
@@ -30,7 +25,8 @@ const handler = ({
       connectorUpdate
     },
     json: {
-      fetchAllHandler
+      fetchAllHandler,
+      supportedEvents
     },
     incoming: {
       incomingHandler

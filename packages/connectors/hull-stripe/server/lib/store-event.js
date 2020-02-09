@@ -1,8 +1,8 @@
 // @flow
 import type { HullContext, HullUserClaims } from "hull";
 
-const getEventContext = require("./get-event-context");
-const getEventProperties = require("./get-event-properties");
+import getEventContext from "./get-event-context";
+import getEventProperties from "./get-event-properties";
 
 function storeEvent(
   ctx: HullContext,
@@ -11,13 +11,11 @@ function storeEvent(
   const { client } = ctx;
   const properties = getEventProperties(event);
   const context = getEventContext(event);
-  const userClient = client.asUser(user);
-
   // Only track if we support this event type
   if (name) {
-    return userClient.track(name, properties, context);
+    return client.asUser(user).track(name, properties, context);
   }
-  return "";
+  return undefined;
 }
 
 module.exports = storeEvent;

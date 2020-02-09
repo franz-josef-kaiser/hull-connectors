@@ -27,6 +27,184 @@
       }
     },
     {
+      "title": "Invoice Mapping",
+      "name": "stripe_invoice_mapping",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "hull": {
+            "type": "string"
+          },
+          "service": {
+            "type": "string"
+          }
+        }
+      },
+      "default": [
+        {
+          "service": "tax",
+          "hull": "tax"
+        },
+        {
+          "service": "tax_percent",
+          "hull": "tax_percent"
+        },
+        {
+          "service": "forgiven",
+          "hull": "forgiven"
+        },
+        {
+          "service": "total",
+          "hull": "total"
+        },
+        {
+          "service": "subtotal",
+          "hull": "subtotal"
+        },
+        {
+          "service": "application_fee",
+          "hull": "application_fee"
+        },
+        {
+          "service": "attempt_count",
+          "hull": "attempt_count"
+        },
+        {
+          "service": "attempted",
+          "hull": "attempted"
+        },
+        {
+          "service": "charge",
+          "hull": "charge"
+        },
+        {
+          "service": "closed",
+          "hull": "closed"
+        },
+        {
+          "service": "currency",
+          "hull": "currency"
+        },
+        {
+          "service": "starting_balance",
+          "hull": "starting_balance"
+        },
+        {
+          "service": "ending_balance",
+          "hull": "ending_balance"
+        },
+        {
+          "service": "paid",
+          "hull": "paid"
+        },
+        {
+          "service": "id",
+          "hull": "invoice_id"
+        },
+        {
+          "service": "order",
+          "hull": "order_id"
+        },
+        {
+          "service": "description",
+          "hull": "description"
+        },
+        {
+          "service": "date",
+          "hull": "invoiced_at"
+        },
+        {
+          "service": "period_end",
+          "hull": "period_end_at"
+        },
+        {
+          "service": "period_start",
+          "hull": "period_start_at"
+        },
+        {
+          "service": "next_payment_attempt",
+          "hull": "next_payment_attempt_at"
+        },
+        {
+          "service": "discount.start",
+          "hull": "discount.start_at"
+        },
+        {
+          "service": "discount.end",
+          "hull": "discount.end_at"
+        },
+        {
+          "service": "discount.coupon.id",
+          "hull": "coupon_id"
+        },
+        {
+          "service": "discount.coupon.amount_off",
+          "hull": "coupon_amount_off"
+        },
+        {
+          "service": "discount.coupon.created",
+          "hull": "coupon_created_at"
+        },
+        {
+          "service": "discount.coupon.currency",
+          "hull": "coupon_currency"
+        },
+        {
+          "service": "discount.coupon.duration",
+          "hull": "coupon_duration"
+        },
+        {
+          "service": "discount.coupon.duration_in_months",
+          "hull": "coupon_duration_in_months"
+        },
+        {
+          "service": "discount.coupon.percent_off",
+          "hull": "coupon_percent_off"
+        },
+        {
+          "service": "amount_refunded",
+          "hull": "amount_refunded"
+        },
+        {
+          "service": "$sum(lines.data[].amount)",
+          "hull": "total"
+        },
+        {
+          "service": "lines.data[].amount",
+          "hull": "amounts"
+        },
+        {
+          "service": "lines.data[].plan.id",
+          "hull": "plan_ids"
+        },
+        {
+          "service": "lines.data[].plan.name",
+          "hull": "plan_names"
+        },
+        {
+          "service": "lines.data[].plan.amount",
+          "hull": "plan_amounts"
+        }
+      ]
+    },
+    {
+      "name": "synchronized_events",
+      "title": "Events captured from Stripe",
+      "description": "List the events that stripe will capture",
+      "options": {
+        "loadOptions": "/supported-events"
+      },
+      "defaults": [
+        "charge.succeeded",
+        "charge.refunded",
+        "customer.subscription.updated",
+        "customer.subscription.created",
+        "customer.subscription.deleted"
+      ],
+      "type": "string"
+    },
+    {
       "name": "metadata_id_parameter",
       "title": "Metadata field",
       "description": "The name of the field in the Stripe payload where the User ID is stored. If empty, we fallback to using the Email we receive",
@@ -66,6 +244,13 @@
         "private_settings.id_parameter",
         "private_settings.use_accounts"
       ]
+    },
+    {
+      "title": "Invoice Object",
+      "description": "Define how to capture the Stripe Invoice Object",
+      "properties": [
+        "private_settings.stripe_invoice_mapping"
+      ]
     }
   ],
   "readme": "readme.md",
@@ -74,6 +259,15 @@
     {
       "url": "/fetch-all",
       "handler": "fetchAllHandler",
+      "options": {
+        "cache": {
+          "key": false
+        }
+      }
+    },
+    {
+      "url": "/supported-events",
+      "handler": "supportedEvents",
       "options": {
         "cache": {
           "key": false

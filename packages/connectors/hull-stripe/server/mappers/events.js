@@ -1,9 +1,70 @@
 // @flow
+
+// const EVENTS = [
+//   "charge.succeeded",
+//   "charge.refunded",
+//   "customer.subscription.updated",
+//   "customer.subscription.created",
+//   "customer.subscription.deleted"
+// ];
+// export default EVENTS;
+
 const EVENTS = [
-  "charge.succeeded",
+  "charge.captured",
+  "charge.dispute.closed",
+  "charge.dispute.created",
+  "charge.dispute.funds_reinstated",
+  "charge.dispute.funds_withdrawn",
+  "charge.dispute.updated",
+  "charge.expired",
+  "charge.failed",
+  "charge.pending",
+  "charge.refund.updated",
   "charge.refunded",
-  "customer.subscription.updated",
+  "charge.succeeded",
+  "charge.updated",
+  // "checkout.session.completed",
+  "credit_note.created",
+  "credit_note.updated",
+  "credit_note.voided",
+  "customer.created",
+  "customer.deleted",
+  "customer.discount.created",
+  "customer.discount.deleted",
+  "customer.discount.updated",
+  "customer.source.created",
+  "customer.source.deleted",
+  "customer.source.expiring",
+  "customer.source.updated",
   "customer.subscription.created",
-  "customer.subscription.deleted"
+  "customer.subscription.deleted",
+  // "customer.subscription.pending_update_applied",
+  // "customer.subscription.pending_update_expired",
+  // "customer.subscription.trial_will_end",
+  "customer.subscription.updated",
+  // "customer.tax_id.created",
+  // "customer.tax_id.deleted",
+  // "customer.tax_id.updated",
+  "customer.updated",
+  "invoice.created",
+  "invoice.deleted",
+  "invoice.finalized",
+  // "invoice.marked_uncollectible",
+  // "invoice.payment_action_required",
+  "invoice.payment_failed",
+  "invoice.payment_succeeded",
+  "invoice.sent",
+  "invoice.upcoming",
+  "invoice.updated",
+  "invoice.voided"
+  // "person.created",
+  // "person.deleted",
+  // "person.updated",
+  // "recipient.created",
+  // "recipient.deleted",
+  // "recipient.updated",
+  // "review.closed",
+  // "review.opened",
 ];
+
 export default EVENTS;

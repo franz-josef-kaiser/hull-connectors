@@ -1,6 +1,8 @@
-const _ = require("lodash");
+// @flow
 
-const map = {
+import type { StripeEvent } from "../../types";
+
+const MAP = {
   "invoice.payment_failed": "Invoice Payment Failed",
   "invoice.payment_succeeded": "Invoice Payment Succeeded",
   "invoice.upcoming": "Invoice Upcoming",
@@ -13,8 +15,6 @@ const map = {
   "customer.subscription.deleted": "Subscription Ended"
 };
 
-function getEventName(event) {
-  return _.get(map, event.type, null);
-}
+const getEventName = (event: StripeEvent) => MAP[event.type] || null;
 
-module.exports = getEventName;
+export default getEventName;

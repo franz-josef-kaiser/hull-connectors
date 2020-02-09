@@ -1,8 +1,10 @@
 // @flow
 
 import type { HullContext } from "hull";
+
 import _ from "lodash";
 import Stripe from "stripe";
+import type { StripeCustomerHash } from "../../types";
 import EVENTS from "../mappers/events";
 import storeEvent from "./store-event";
 import storeUser from "./store-user";
@@ -11,12 +13,6 @@ import storeAccount from "./store-account";
 const getUserIdent = require("./get-user-ident");
 const getEventName = require("./get-event-name");
 
-type StripeCustomer = {
-  id: string,
-  email: string,
-  metadata?: {}
-};
-type StripeCustomerHash = { [string]: StripeCustomer };
 // Recursive event fetch method;
 async function fetchEvents(
   ctx,
