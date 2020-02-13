@@ -18,7 +18,10 @@ import type {
   HullClientConfig,
   HullNotification,
   HullCredentialsObject,
-  HullClient
+  HullClient,
+  HullUserUpdateMessage,
+  HullAccountUpdateMessage,
+  HullEvent
 } from "./index";
 
 import {
@@ -29,6 +32,7 @@ import {
   extractRequest,
   mappingToOptions,
   mapAttributes,
+  getStandardMapping,
   operations
 } from "../helpers";
 
@@ -114,6 +118,11 @@ export type HullContext = {|
     extractRequest: $Call<typeof extractRequest, HullContext>,
     mappingToOptions: $Call<typeof mappingToOptions, HullContext>,
     mapAttributes: $Call<typeof mapAttributes, HullContext>,
+    getStandardMapping: $Call<typeof getStandardMapping, HullContext>,
+    segmentChangesToEvents: (
+      HullAccountUpdateMessage | HullUserUpdateMessage,
+      Array<HullSegment>
+    ) => Array<HullEvent>,
     operations: $Call<typeof operations, HullContext>
   }
 |};
