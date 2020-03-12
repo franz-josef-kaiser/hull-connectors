@@ -243,61 +243,20 @@ class HullClient {
     };
 
     this.requestId = conf.requestId;
-
-    if (this.clientConfig.get("logs")) {
-      const logsArray = this.clientConfig.get("logs");
+    const logsArray = this.clientConfig.get("logs");
+    if (logsArray) {
       if (!Array.isArray(logsArray)) {
         throw new Error("Configuration `logs` must be an Array");
       }
-      if (logger.transports.console) {
-        logger.remove("console");
-        logger.add(winston.transports.Memory, {
-          level: "debug",
-          json: true,
-          stringify: input => input
-        });
-      }
       logger.removeAllListeners();
-      logger.on("logged", (level, message, payload) => {
-        let transformedLog;
-
-        if (this.config.esLogTransform) {
-          transformedLog = {
-            message: payload.message,
-            level: payload.level,
-            data: payload.data,
-            context: _.pickBy(payload, (v, k) => {
-              return (
-                [
-                  "request_id",
-                  "connector_name",
-                  "connector",
-                  "user_id",
-                  "user_anonymous_id",
-                  "user_external_id",
-                  "user_email",
-                  "account_id",
-                  "account_domain",
-                  "account_external_id",
-                  "account_anonymous_id",
-                  "subject_type",
-                  "organization"
-                ].includes(k) && !_.isNil(v)
-              );
-            }),
-            timestamp: new Date().toISOString()
-          };
-        } else {
-          transformedLog = {
-            message,
-            level,
-            data: payload.data,
-            context: payload.context,
-            timestamp: new Date().toISOString()
-          };
-        }
-
-        logsArray.push(transformedLog);
+      logger.on("data", ({ level, message, context, data }) => {
+        logsArray.push({
+          message,
+          level,
+          data,
+          context,
+          timestamp: new Date().toISOString()
+        });
       });
     }
   }
