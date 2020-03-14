@@ -23,7 +23,21 @@ const handler = ({ EntryModel }: { EntryModel: any }) => (
     tabs: {
       admin: (): HullExternalResponse => ({ pageLocation: "admin.html" })
     },
-    statuses: { statusHandler },
+    statuses: {
+      statusHandler: statusHandler({
+        globals: [
+          "variables",
+          "body",
+          "headers",
+          "status",
+          "date",
+          "url",
+          "method",
+          "requestHeaders",
+          "requestBody"
+        ]
+      })
+    },
     schedules: {
       scheduledCall: scheduledCallHandler(EntryModel),
       removeOldEntriesHandler: removeOldEntriesHandler(EntryModel)

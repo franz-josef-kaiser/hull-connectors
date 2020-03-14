@@ -25,7 +25,24 @@ const handler = ({ flow_size, flow_in }: HandlerType) => (
     subscriptions: {
       accountUpdate: accountUpdate({ flow_size, flow_in })
     },
-    statuses: { statusHandler },
+    statuses: {
+      statusHandler: statusHandler({
+        globals: [
+          "account_segment_ids",
+          "account_segments",
+          "account",
+          "changes",
+          "isInSegment",
+          "enteredSegment",
+          "enteredAccountSegment",
+          "leftSegment",
+          "leftAccountSegment",
+          // "isGenericEmail",
+          // "isGenericDomain",
+          "variables"
+        ]
+      })
+    },
     json: {
       configHandler: configHandler(configData),
       entityHandler,

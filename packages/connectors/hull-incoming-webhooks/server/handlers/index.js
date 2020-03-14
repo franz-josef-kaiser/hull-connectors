@@ -26,7 +26,23 @@ const handler = ({ EntryModel }: { EntryModel: any }) => (
     schedules: {
       removeOldEntriesHandler: removeOldEntriesHandler(EntryModel)
     },
-    statuses: { statusHandler },
+    statuses: {
+      statusHandler: statusHandler({
+        globals: [
+          "ip",
+          "url",
+          "method",
+          "protocol",
+          "hostname",
+          "path",
+          "params",
+          "query",
+          "headers",
+          "cookies",
+          "body"
+        ]
+      })
+    },
     incoming: { incomingHandler: incomingHandler(EntryModel) },
     json: {
       getRecent: recentHandler(EntryModel),

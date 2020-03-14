@@ -2,9 +2,11 @@
 import type { HullContext, HullStatusResponse } from "hull";
 import { check } from "hull-vm";
 
-export default async function statusCheck(
+type StatusCheckOpts = { globals?: Array<string> };
+
+const statusCheck = ({ globals = [] }: StatusCheckOpts) => async (
   ctx: HullContext
-): HullStatusResponse {
+): HullStatusResponse => {
   const { connector } = ctx;
   const { private_settings = {} } = connector;
   const { code } = private_settings;
@@ -42,21 +44,13 @@ export default async function statusCheck(
   //     );
   //   }
 
-  const lintMessages = check.lint(ctx, code, {
-    account_segment_ids: true,
-    account_segments: true,
-    account: true,
-    changes: true,
-    events: true,
-    segment_ids: true,
-    segments: true,
-    user: true,
-    variables: true
-  });
+  const lintMessages = check.lint(ctx, code, globals);
+
   if (lintMessages.length) {
     status = "error";
     messages.push(...lintMessages);
   }
 
   return { messages, status };
-}
+};
+export default statusCheck;

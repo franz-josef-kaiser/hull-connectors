@@ -6,15 +6,11 @@ const LIBS = [
   "_",
   "moment",
   "urijs",
+  "uuid",
+  "LibPhoneNumber",
   "hull",
   "console",
-  "isInSegment",
-  "enteredSegment",
-  "enteredAccountSegment",
-  "leftSegment",
-  "leftAccountSegment",
-  "isGenericEmail",
-  "isGenericDomain",
+  "setIfNull",
   "request",
   "captureException",
   "captureMessage"
@@ -34,7 +30,7 @@ const linter = new Linter();
 const getGlobals = (vars: Array<Array<string>>) =>
   _.fromPairs(_.uniq(_.flatten(vars)).map(v => [v, true]));
 
-const getConfig = (payload?: Object = {}) => ({
+const getConfig = (globals?: Array<string> = []) => ({
   env: {
     es6: true,
     node: true
@@ -46,7 +42,7 @@ const getConfig = (payload?: Object = {}) => ({
   rules: {
     "no-undef": [2]
   },
-  globals: getGlobals([_.keys(payload), LIBS, COMMON_VARS])
+  globals: getGlobals([globals, LIBS, COMMON_VARS])
 });
 
 function formatLinterError({ line, column, source, message }) {
@@ -56,8 +52,11 @@ ${source}
 ${message}`;
 }
 
-export default function lint(code: string, payload?: Object): Array<string> {
+export default function lint(
+  code: string,
+  globals?: Array<string>
+): Array<string> {
   return linter
-    .verify(code, getConfig(payload), { filename: "Code" })
+    .verify(code, getConfig(globals), { filename: "Code" })
     .map(formatLinterError);
 }
