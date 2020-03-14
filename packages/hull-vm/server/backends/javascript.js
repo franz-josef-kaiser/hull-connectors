@@ -5,6 +5,7 @@ import { VM } from "vm2";
 import moment from "moment";
 import urijs from "urijs";
 import _ from "lodash";
+
 import type { Result, ComputeOptions } from "../../types";
 import scopedUserMethods from "../sandbox/user_methods";
 import getRequest from "../sandbox/request";
@@ -14,6 +15,7 @@ import getLibPhoneNumber from "../sandbox/libphonenumber";
 import check from "../check";
 
 const LIBS = { _, moment, urijs };
+const setIfNull = value => ({ operation: "setIfNull", value });
 
 export default async function(
   ctx: HullContext,
@@ -29,6 +31,7 @@ export default async function(
     request: getRequest(ctx, result),
     LibPhoneNumber: getLibPhoneNumber(),
     uuid: getUUID(ctx, result),
+    setIfNull,
     hull,
     console: getConsole(result, preview),
     connector,
@@ -73,6 +76,5 @@ export default async function(
       result.errors.push(...linterErrors);
     }
   }
-
   return result;
 }
