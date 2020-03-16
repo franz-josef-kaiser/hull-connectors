@@ -12,6 +12,7 @@ import type {
 
 const {
   trimTraitsPrefixFromUserMessage,
+  dedupeMessages,
   // computeMatchingSegments,
   // filterMatchingSegments,
   remapUserSegmentsKey
@@ -63,11 +64,14 @@ const processHullMessage = ({
 
   // const filterMatches = isBatch ? fp.identity : filterMatchingSegments;
 
-  return fp.map(
-    fp.flow(
-      trim,
-      remapUserSegmentsKey
-      // , compute
+  return fp.flow(
+    dedupeMessages,
+    fp.map(
+      fp.flow(
+        trim,
+        remapUserSegmentsKey
+        // , compute
+      )
     )
   );
 
