@@ -14,6 +14,7 @@ const cast = (type?: HullJsonataType) => (value: any) => {
   if (type === "array") return `${value}[]`;
   if (type === "number") return `$number(${value})`;
   if (type === "string") return `${value}&""`;
+  if (type === "dateMillis") return `$millis(${value})`;
   if (type === "stringifiedArray") return `${value}[]&""`;
   return value;
 };

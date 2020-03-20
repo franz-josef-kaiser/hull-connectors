@@ -59,6 +59,7 @@ export type HullJsonataType =
   | "string"
   | "number"
   | "boolean"
+  | "dateMillis"
   | "stringifiedArray";
 
 export type HullAttributeMapping = {
