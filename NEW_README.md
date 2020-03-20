@@ -234,7 +234,7 @@ export default function connectorConfig(): HullConnectorConfig {
     cacheConfig: { store: "memory", ttl: 1 },
     logsConfig: { logLevel: LOG_LEVEL },
     clientConfig: { firehoseUrl: OVERRIDE_FIREHOSE_URL },
-    serverConfig: { start: true }
+    serverConfig: { start: true, cluster: true }
   };
 }
 ```
@@ -1144,3 +1144,7 @@ docker build . -t hull-connectors
 ```
 docker exec -it CONTAINER_ID /bin/sh
 ```
+
+## Cluster mode
+
+You can activate cluster mode by passing it to the `serverConfig` - Keep in mind that when you do this, you NEED to have a REDIS caching layer in place since Memory won't be shared anymore. So don't activate cluster mode unless you have it in place

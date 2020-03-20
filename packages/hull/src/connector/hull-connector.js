@@ -1,6 +1,8 @@
 // @flow
 
 import type { $Application, Middleware } from "express";
+import cluster from "cluster";
+import OS from "os";
 import _ from "lodash";
 import type { Server } from "http";
 import express from "express";
@@ -28,7 +30,6 @@ import {
   OAuthHandler,
   statusHandler
 } from "../handlers";
-
 import errorHandler from "./error";
 
 const { compose } = require("compose-middleware");
@@ -143,6 +144,12 @@ class HullConnector {
 
   server: Server;
 
+  cluster: any;
+
+  clusterSlave: boolean;
+
+  clusterMaster: boolean;
+
   constructor(
     dependencies: {
       Worker: Class<Worker>,
@@ -228,21 +235,31 @@ class HullConnector {
       debug("No Worker started: `workerConfig.start` is false");
     }
     if (this.serverConfig.start) {
+      // If we're in Cluster mode
+
+      if (this.serverConfig.cluster === true) {
+        if (!this.cacheConfig || this.cacheConfig.store === "memory") {
+          throw new Error(
+            "Can't start in Cluster mode without a shared caching layer in place"
+          );
+        }
+        // eslint-disable-next-line
+        this.cluster = require("cluster");
+        this.clusterMaster = this.cluster.isMaster;
+        this.clusterSlave = !this.cluster.isMaster;
+        if (this.clusterMaster) {
+          console.log("Starting in Cluster Master");
+          const cpuCount = OS.cpus().length;
+          for (let i = 0; i < cpuCount; i += 1) {
+            this.cluster.fork();
+          }
+          return;
+        }
+        console.log("Starting in Cluster Slave");
+      }
       const app = express();
       this.app = app;
-      if (this.connectorConfig.devMode) {
-        debug("Starting Server in DevMode");
-        // eslint-disable-next-line global-require
-        const webpackDevMode = require("./dev-mode");
-
-        webpackDevMode(app, {
-          port: this.connectorConfig.port,
-          source: getAbsolutePath("src"),
-          destination: getAbsolutePath("dist")
-        });
-      } else {
-        debug("Starting Server");
-      }
+      // this.startDevMode(app);
       const server = this.startApp(app);
       if (server) {
         this.server = server;
@@ -257,6 +274,22 @@ class HullConnector {
     const argv = minimist(process.argv);
     if (argv.repl) {
       this.repl(_.pick(argv, "id", "organization", "secret"));
+    }
+  }
+
+  startDevMode(app: $Application) {
+    if (this.connectorConfig.devMode && !this.cluster) {
+      debug("Starting Server in DevMode");
+      // eslint-disable-next-line global-require
+      const webpackDevMode = require("./dev-mode");
+
+      webpackDevMode(app, {
+        port: this.connectorConfig.port,
+        source: getAbsolutePath("src"),
+        destination: getAbsolutePath("dist")
+      });
+    } else {
+      debug("Starting Server");
     }
   }
 
