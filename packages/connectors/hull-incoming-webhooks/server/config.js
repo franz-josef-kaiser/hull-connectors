@@ -15,6 +15,8 @@ export default function connectorConfig(): HullConnectorConfig {
     OVERRIDE_FIREHOSE_URL,
     REDIS_URL,
     CLUSTER = false,
+    SHIP_CACHE_TTL = 60,
+    SHIP_CACHE_MAX = 100,
     MONGO_URL,
     MONGO_COLLECTION_NAME = "webhook_requests"
   } = process.env;
