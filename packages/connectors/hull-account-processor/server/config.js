@@ -12,13 +12,12 @@ export default function connectorConfig(): HullConnectorConfig {
     PORT = 8082,
     OVERRIDE_FIREHOSE_URL,
     REDIS_URL,
+    CLUSTER = false,
     SHIP_CACHE_TTL = 60,
     SHIP_CACHE_MAX = 100,
     FLOW_CONTROL_IN,
     FLOW_CONTROL_SIZE
   } = process.env;
-
-  const hostSecret = SECRET || "1234";
 
   const cacheConfig =
     REDIS_URL !== undefined
@@ -29,7 +28,7 @@ export default function connectorConfig(): HullConnectorConfig {
       : { store: "memory" };
   return {
     manifest,
-    hostSecret,
+    hostSecret: SECRET || "1234",
     devMode: NODE_ENV === "development",
     port: PORT || 8082,
     timeout: "25s",
@@ -50,6 +49,7 @@ export default function connectorConfig(): HullConnectorConfig {
       firehoseUrl: OVERRIDE_FIREHOSE_URL
     },
     serverConfig: {
+      cluster: !!(CLUSTER && CLUSTER === "true"),
       start: true
     }
   };

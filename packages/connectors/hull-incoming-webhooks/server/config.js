@@ -13,7 +13,8 @@ export default function connectorConfig(): HullConnectorConfig {
     NODE_ENV,
     PORT = 8082,
     OVERRIDE_FIREHOSE_URL,
-
+    REDIS_URL,
+    CLUSTER = false,
     MONGO_URL,
     MONGO_COLLECTION_NAME = "webhook_requests"
   } = process.env;
@@ -28,6 +29,13 @@ export default function connectorConfig(): HullConnectorConfig {
     collectionName: MONGO_COLLECTION_NAME
   });
 
+  const cacheConfig =
+    REDIS_URL !== undefined
+      ? {
+          store: "redis",
+          url: REDIS_URL
+        }
+      : { store: "memory" };
   return {
     manifest,
     hostSecret,
@@ -36,8 +44,9 @@ export default function connectorConfig(): HullConnectorConfig {
     handlers: handlers({ EntryModel }),
     middlewares: [fetchToken],
     cacheConfig: {
-      store: "memory",
-      ttl: 1
+      ...cacheConfig,
+      ttl: SHIP_CACHE_TTL || 1,
+      max: SHIP_CACHE_MAX || 100
     },
     logsConfig: {
       logLevel: LOG_LEVEL
@@ -46,6 +55,7 @@ export default function connectorConfig(): HullConnectorConfig {
       firehoseUrl: OVERRIDE_FIREHOSE_URL
     },
     serverConfig: {
+      cluster: !!(CLUSTER && CLUSTER === "true"),
       start: true
     }
   };
