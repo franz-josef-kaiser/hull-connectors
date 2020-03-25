@@ -8,8 +8,8 @@ import _ from "lodash";
 import { asyncComputeAndIngest, getClaims, varsFromSettings } from "hull-vm";
 
 type FlowControl = {
-  flow_size: number,
-  flow_in: number
+  flow_size: number | string,
+  flow_in: number | string
 };
 const update = ({ flow_size, flow_in }: FlowControl) => async (
   ctx: HullContext,

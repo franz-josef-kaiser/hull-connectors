@@ -7,11 +7,13 @@ import type {
 import _ from "lodash";
 import { asyncComputeAndIngest, getClaims, varsFromSettings } from "hull-vm";
 
-type FlowControl = {
-  flow_size?: number,
-  flow_in?: number
-};
-const update = ({ flow_size = 100, flow_in = 10 }: FlowControl) => async (
+const update = ({
+  flow_size,
+  flow_in
+}: {
+  flow_size: number | string,
+  flow_in: number | string
+}) => async (
   ctx: HullContext,
   messages: Array<HullUserUpdateMessage>
 ): HullNotificationResponse => {
@@ -20,7 +22,6 @@ const update = ({ flow_size = 100, flow_in = 10 }: FlowControl) => async (
   const { code = "", language = "javascript" } = private_settings;
   const { group } = client.utils.traits;
 
-  // const user_ids = _.map(messages, "user.id");
   try {
     await Promise.all(
       messages.map(payload =>

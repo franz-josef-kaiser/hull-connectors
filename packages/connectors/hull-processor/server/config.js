@@ -9,12 +9,12 @@ export default function connectorConfig(): HullConnectorConfig {
     LOG_LEVEL,
     SECRET,
     NODE_ENV,
-    PORT = 8082,
+    PORT,
     OVERRIDE_FIREHOSE_URL,
     REDIS_URL,
     CLUSTER = false,
-    SHIP_CACHE_TTL = 60,
-    SHIP_CACHE_MAX = 100,
+    SHIP_CACHE_TTL,
+    SHIP_CACHE_MAX,
     FLOW_CONTROL_IN,
     FLOW_CONTROL_SIZE
   } = process.env;
@@ -33,8 +33,8 @@ export default function connectorConfig(): HullConnectorConfig {
     port: PORT || 8082,
     timeout: "25s",
     handlers: handlers({
-      flow_size: FLOW_CONTROL_SIZE,
-      flow_in: FLOW_CONTROL_IN
+      flow_size: FLOW_CONTROL_SIZE || 200,
+      flow_in: FLOW_CONTROL_IN || 1
     }),
     middlewares: [],
     cacheConfig: {
@@ -49,7 +49,7 @@ export default function connectorConfig(): HullConnectorConfig {
       firehoseUrl: OVERRIDE_FIREHOSE_URL
     },
     serverConfig: {
-      cluster: !!(CLUSTER && CLUSTER === "true"),
+      cluster: !!(CLUSTER && (CLUSTER === "true" || CLUSTER === true)),
       start: true
     }
   };

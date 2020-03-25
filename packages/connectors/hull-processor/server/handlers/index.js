@@ -14,10 +14,13 @@ import {
 import configData from "./config-data";
 import userUpdate from "./user-update";
 
-type HandlerType = { flow_size?: number, flow_in?: number };
-const handler = ({ flow_size, flow_in }: HandlerType) => (
-  _connector: Connector
-): HullHandlersConfiguration => {
+const handler = ({
+  flow_size,
+  flow_in
+}: {
+  flow_size: number | string,
+  flow_in: number | string
+}) => (_connector: Connector): HullHandlersConfiguration => {
   return {
     tabs: {
       admin: (): HullExternalResponse => ({ pageLocation: "admin.html" })
