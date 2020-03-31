@@ -20,7 +20,7 @@ export const STANDARD_SEGMENT_IDS = ["hullSegmentId"];
 export const NEXT_FLOW_CONTROL = {
   type: "next",
   in: 10,
-  size: 100
+  size: 200
 };
 
 export const USER = {
