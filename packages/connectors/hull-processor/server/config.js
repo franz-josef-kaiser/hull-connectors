@@ -26,6 +26,8 @@ export default function connectorConfig(): HullConnectorConfig {
           url: REDIS_URL
         }
       : { store: "memory" };
+  const cluster = !!(CLUSTER && (CLUSTER === "true" || CLUSTER === true));
+  const workers = process.env.WEB_CONCURRENCY || 1;
   return {
     manifest,
     hostSecret: SECRET || "1234",
@@ -49,7 +51,8 @@ export default function connectorConfig(): HullConnectorConfig {
       firehoseUrl: OVERRIDE_FIREHOSE_URL
     },
     serverConfig: {
-      cluster: !!(CLUSTER && (CLUSTER === "true" || CLUSTER === true)),
+      cluster,
+      workers,
       start: true
     }
   };

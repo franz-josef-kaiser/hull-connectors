@@ -1,7 +1,6 @@
 // @flow
 
 import type { $Application, Middleware } from "express";
-import OS from "os";
 import _ from "lodash";
 import type { Server } from "http";
 import express from "express";
@@ -244,8 +243,7 @@ class HullConnector {
       // In Master Mode, start in Master and early return; Don't create an express app
       if (this.clusterMaster) {
         console.log("Starting in Cluster Master");
-        const cpuCount = OS.cpus().length;
-        for (let i = 0; i < cpuCount; i += 1) {
+        for (let i = 0; i < (this.serverConfig.workers || 1); i += 1) {
           this.cluster.fork();
         }
         return undefined;

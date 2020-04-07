@@ -64,7 +64,8 @@ export type HullHTTPClientConfig = {
 };
 export type HullServerConfig = {
   start?: boolean,
-  cluster?: boolean
+  cluster?: boolean,
+  workers: number
 };
 export type HullWorkerConfig = {
   start?: boolean,
