@@ -86,20 +86,22 @@ export const callTraits = async ({
             return false;
           });
           if (_.size(attributes)) {
-            client.traits(attributes);
+            await client.traits(attributes);
           }
           successful += 1;
-          return client.logger.debug(`incoming.${entity}.success`, {
+          client.logger.debug(`incoming.${entity}.success`, {
             attributes,
             no_ops
           });
+          return undefined;
         } catch (err) {
-          return client.logger.error(`incoming.${entity}.error`, {
+          client.logger.error(`incoming.${entity}.error`, {
             hull_summary: `Error saving Attributes: ${err.message ||
               "Unexpected error"}`,
             [entity]: claims,
             errors: err
           });
+          return undefined;
         }
       })
     );
@@ -124,23 +126,25 @@ export const callEvents = async ({
         const client = hullClient(claims);
         try {
           successful += 1;
-          client.track(eventName, properties, {
+          await client.track(eventName, properties, {
             ip: "0",
             source: "code",
             ...context
           });
-          return client.logger.debug("incoming.event.success", {
+          client.logger.debug("incoming.event.success", {
             eventName,
             properties
           });
+          return undefined;
         } catch (err) {
-          return client.logger.error("incoming.event.error", {
+          client.logger.error("incoming.event.error", {
             hull_summary: `Error processing Event: ${err.message ||
               "Unexpected error"}`,
             user: claims,
             errors: err,
             event
           });
+          return undefined;
         }
       })
     );
@@ -171,19 +175,21 @@ export const callLinks = async ({
         const client = hullClient(userClaims);
         try {
           successful += 1;
-          client.account(accountClaims).traits({});
-          return client.logger.debug(`incoming.${entity}.link.success`, {
+          await client.account(accountClaims).traits({});
+          client.logger.debug(`incoming.${entity}.link.success`, {
             accountClaims,
             userClaims
           });
+          return undefined;
         } catch (err) {
-          return client.logger.error(`incoming.${entity}.link.error`, {
+          client.logger.error(`incoming.${entity}.link.error`, {
             hull_summary: `Error Linking User and account: ${err.message ||
               "Unexpected error"}`,
             user: userClaims,
             account: accountClaims,
             errors: err
           });
+          return undefined;
         }
       })
     );
@@ -223,23 +229,24 @@ export const callAlias = async ({
               ) {
                 return [];
               }
-              client[operation === "alias" ? "alias" : "unalias"](a);
+              await client[operation === "alias" ? "alias" : "unalias"](a);
               successful += 1;
               return [a, operation];
             })
           );
           if (successful) {
-            return client.logger.info(`incoming.${entity}.alias.success`, {
+            client.logger.info(`incoming.${entity}.alias.success`, {
               claims,
               operations: opLog
             });
           }
           return undefined;
         } catch (err) {
-          return client.logger.info(`incoming.${entity}.alias.error`, {
+          client.logger.info(`incoming.${entity}.alias.error`, {
             claims,
             aliases: operations.toJS()
           });
+          return undefined;
         }
       })
     );
