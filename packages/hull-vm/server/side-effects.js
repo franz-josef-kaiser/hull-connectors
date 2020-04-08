@@ -86,7 +86,7 @@ export const callTraits = async ({
             return false;
           });
           if (_.size(attributes)) {
-            await client.traits(attributes);
+            client.traits(attributes);
           }
           successful += 1;
           return client.logger.debug(`incoming.${entity}.success`, {
@@ -124,7 +124,7 @@ export const callEvents = async ({
         const client = hullClient(claims);
         try {
           successful += 1;
-          await client.track(eventName, properties, {
+          client.track(eventName, properties, {
             ip: "0",
             source: "code",
             ...context
@@ -171,7 +171,7 @@ export const callLinks = async ({
         const client = hullClient(userClaims);
         try {
           successful += 1;
-          await client.account(accountClaims).traits({});
+          client.account(accountClaims).traits({});
           return client.logger.debug(`incoming.${entity}.link.success`, {
             accountClaims,
             userClaims
@@ -223,7 +223,7 @@ export const callAlias = async ({
               ) {
                 return [];
               }
-              await client[operation === "alias" ? "alias" : "unalias"](a);
+              client[operation === "alias" ? "alias" : "unalias"](a);
               successful += 1;
               return [a, operation];
             })
@@ -236,7 +236,6 @@ export const callAlias = async ({
           }
           return undefined;
         } catch (err) {
-          console.log(err);
           return client.logger.info(`incoming.${entity}.alias.error`, {
             claims,
             aliases: operations.toJS()
@@ -248,7 +247,9 @@ export const callAlias = async ({
       metric.increment(`ship.incoming.${entity}s.alias`, successful);
     return responses;
   } catch (err) {
-    console.log(err);
+    hullClient.logger.error(`outgoing.${entity}.error`, {
+      error: err.message || err
+    });
     return Promise.reject(err);
   }
 };
