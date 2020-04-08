@@ -50,7 +50,7 @@ const logIfNested = (client, attrs) => {
         !_.isEqual(_.sortBy(_.keys(v)), ["operation", "value"])) ||
       (_.isArray(v) && _.some(v, vv => _.isObject(vv)))
     ) {
-      client.logger.info(`Nested object found in key "${k}"`, v);
+      client.logger.debug(`Nested object found in key "${k}"`, v);
     }
   });
 };
@@ -235,14 +235,14 @@ export const callAlias = async ({
             })
           );
           if (successful) {
-            client.logger.info(`incoming.${entity}.alias.success`, {
+            client.logger.debug(`incoming.${entity}.alias.success`, {
               claims,
               operations: opLog
             });
           }
           return undefined;
         } catch (err) {
-          client.logger.info(`incoming.${entity}.alias.error`, {
+          client.logger.error(`incoming.${entity}.alias.error`, {
             claims,
             aliases: operations.toJS()
           });
