@@ -73,35 +73,7 @@ const glue = {
       message: "allgood"
     }
   }),
-  ensureWebhooks: [
-    set("service_name", "pipedrive"),
-    ifL(settings("access_token"), ifL(cond("isEmpty", "${connector.private_settings.webhook_id_person}"), [
-      set("webhookUrl", utils("createWebhookUrl")),
-      set("existingWebhooks", pipedrive("getAllWebhooks")),
-      set("samePersonWebhook", filter({ subscription_url: "${webhookUrl}", event_object: "person" }, "${existingWebhooks}")),
-      ifL("${samePersonWebhook[0]}", {
-        do: set("webhookIdPerson", "${samePersonWebhook[0].id}"),
-        eldo: set("webhookIdPerson", get("data.id", pipedrive("insertWebhook", webhookPersonTemplate))),
-      }),
-      settingsUpdate({
-        webhook_id_person: "${webhookIdPerson}",
-      }),
-      ifL(not(cond("isEmpty", "${connector.private_settings.webhook_id_org}")), route("deleteBadWebhooks")),
-    ])),
-    ifL(settings("access_token"), ifL(cond("isEmpty", "${connector.private_settings.webhook_id_org}"), [
-      set("webhookUrl", utils("createWebhookUrl")),
-      set("existingWebhooks", pipedrive("getAllWebhooks")),
-      set("sameOrgWebhook", filter({ subscription_url: "${webhookUrl}", event_object: "organization" }, "${existingWebhooks}")),
-      ifL("${sameOrgWebhook[0]}", {
-        do: set("webhookIdOrg", "${sameOrgWebhook[0].id}"),
-        eldo: set("webhookIdOrg", get("data.id", pipedrive("insertWebhook", webhookOrgTemplate)))
-      }),
-      settingsUpdate({
-        webhook_id_org: "${webhookIdOrg}"
-      }),
-      route("deleteBadWebhooks")
-    ]))
-  ],
+  ensureWebhooks: [],
   deleteBadWebhooks: [
     set("connectorOrganization", utils("getConnectorOrganization")),
 
