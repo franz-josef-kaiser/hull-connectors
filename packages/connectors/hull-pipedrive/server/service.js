@@ -162,7 +162,10 @@ const service = ({ clientID, clientSecret }: {
     settings: [
       { method: "set", params: { "Content-Type": "application/json" }},
       { method: "set", params: { Authorization: "Bearer ${connector.private_settings.access_token}" }}
-    ]
+    ],
+    headersToMetrics: {
+      "x-daily-requests-left": "ship.service_api.remaining"
+    }
   },
   authentication: {
     strategy: "oauth2",
