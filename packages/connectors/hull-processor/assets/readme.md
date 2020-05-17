@@ -595,7 +595,7 @@ Checkout the Docs for `CountryCodeSource`, `PhoneNumberFormat`, `PhoneNumberType
 The request library is now deprecated. Processor code currently using the request library will be functional,
 but we would advise you to migrate to the super-agent request library which is much more intuitive and elegant to use.
 
-If you are about to write new code to perform any API request, please refer to the [Using Super-agent](#Using Super-agent) section.
+If you are about to write new code to perform any API request, please refer to the [Using Super-agent](#using-super-agent) section.
 
 The library exposes `request-promise` to allow you to call external APIs seamlessly:
 
